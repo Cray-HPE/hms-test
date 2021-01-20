@@ -1,4 +1,4 @@
-> Copyright 2019 - 2020 Cray Inc. All Rights Reserved.
+> Copyright 2019-2021 Hewlett Packard Enterprise Development LP
 
 # HMS Continuous Test (CT) Infrastructure Repository
 

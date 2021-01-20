@@ -24,13 +24,17 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.5.0] - 2021-01-19
+
+### Changed
+
+- CASMHMS-4372 - Updated hms-pytest to use podman instead of containerd.
 
 ## [1.4.0] - 2021-01-14
 
 ### Changed
 
 - Updated license file.
-
 
 ## [1.3.2] - 2020-12-01
 

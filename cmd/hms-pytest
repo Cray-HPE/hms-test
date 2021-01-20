@@ -1,26 +1,25 @@
 #!/bin/bash -e
 
-# Copyright 2019-2020 Hewlett Packard Enterprise Development LP
+# Copyright 2019-2021 Hewlett Packard Enterprise Development LP
 
 # Main
 WORKDIR=${PWD}
 
 # Pull hms-pytest image from DTR.
-TAG="dtr.dev.cray.com/cray/hms-pytest:latest"
+IMAGE="dtr.dev.cray.com/cray/hms-pytest:latest"
 
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
 
-ctr image pull ${TAG}
+podman pull ${IMAGE}
 
-ctr run \
+podman run \
     --rm \
-    --mount type=bind,src=/opt/cray/tests,dst=/opt/cray/tests,options=rbind:rw \
-    --mount type=bind,src=/etc/ssl/certs,dst=/etc/ssl/certs,options=rbind:ro \
-    --mount type=bind,src=/var/lib/ca-certificates/,dst=/var/lib/ca-certificates/,options=rbind:ro \
+    --mount type=bind,src=/opt/cray/tests,dst=/opt/cray/tests,rw=true \
+    --mount type=bind,src=/etc/ssl/certs,dst=/etc/ssl/certs,ro=true \
+    --mount type=bind,src=/var/lib/ca-certificates/,dst=/var/lib/ca-certificates/,ro=true \
     --env CURL_CA_BUNDLE=/var/lib/ca-certificates/ca-bundle.pem \
     --env PYTHONPATH="${PYTHONPATH}:${HMS_TEST_REPO_DIR}" \
-    --net-host \
-    --cwd ${WORKDIR} \
-    ${TAG} \
-    sh pytest $@
+    --workdir ${WORKDIR} \
+    ${IMAGE} \
+    pytest $@
