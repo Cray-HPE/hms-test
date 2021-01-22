@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #
-# Copyright 2019-2020 Hewlett Packard Enterprise Development LP
+# Copyright 2019-2021 Hewlett Packard Enterprise Development LP
 #
 ###############################################################
 #
@@ -17,7 +17,7 @@
 #
 #     DATE STARTED         : 04/23/2019
 #
-#     LAST MODIFIED        : 09/21/2020
+#     LAST MODIFIED        : 01/21/2021
 #
 #     SYNOPSIS
 #       This library file contains BASH functions that are used and shared by
@@ -46,6 +46,7 @@
 #       schooler   06/23/2020   allow 204 status codes for liveness/readiness probes
 #       schooler   07/27/2020   added run_check_pod_job_status function
 #       schooler   09/21/2020   updated for remote testing from ct-pipelines container
+#       schooler   01/21/2021   added HMS version of check_pod_status tool
 #
 #     DEPENDENCIES
 #       None
@@ -294,13 +295,25 @@ function run_check_pod_status()
         >&2 echo "ERROR: No pod token string argument passed to run_check_pod_status() function"
         return 1
     fi
-    CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/bin/check_pod_status"
+    # HMS check_pod_status tool on NCN
+    CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
     if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
         >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
-        CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/bin/check_pod_status"
+        # HMS check_pod_status tool in remote ct-pipelines container
+        CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
         if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
             >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
-            return 1
+            # DST check_pod_status tool on NCN
+            CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/bin/check_pod_status"
+            if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
+                >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
+                # DST check_pod_status tool in remote ct-pipelines container
+                CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/bin/check_pod_status"
+                if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
+                    >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
+                    return 1
+                fi
+            fi
         fi
     fi
     CHECK_POD_STATUS_CMD="${CHECK_POD_STATUS_PATH} ${POD_TOKEN_STRING}"
@@ -322,13 +335,25 @@ function run_check_pod_job_status()
         >&2 echo "ERROR: No job token string argument passed to run_check_pod_job_status() function"
         return 1
     fi
-    CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/bin/check_pod_status"
+    # HMS check_pod_status tool on NCN
+    CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
     if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
         >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-        CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/bin/check_pod_status"
+        # HMS check_pod_status tool in remote ct-pipelines container
+        CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
         if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
             >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-            return 1
+            # DST check_pod_status tool on NCN
+            CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/bin/check_pod_status"
+            if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
+                >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
+                # DST check_pod_status tool in remote ct-pipelines container
+                CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/bin/check_pod_status"
+                if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
+                    >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
+                    return 1
+                fi
+            fi
         fi
     fi
     CHECK_POD_STATUS_CMD="${CHECK_POD_STATUS_PATH} ${JOB_TOKEN_STRING}"
