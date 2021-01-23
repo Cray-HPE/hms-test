@@ -1,4 +1,4 @@
-# Copyright 2020 Hewlett Packard Enterprise Development LP
+# Copyright 2020-2021 Hewlett Packard Enterprise Development LP
 
 Name: hms-ct-test-crayctldeploy
 License: Cray Software License Agreement
@@ -22,7 +22,6 @@ This package contains files necessary to deploy the HMS CT tests.
 %build
 repo_dir=$(mktemp -d)
 repos=(
-    hms/hms-badger-integration-tests
     hms/hms-bss
     hms/hms-capmc
     hms/hms-firmware-action
@@ -30,7 +29,6 @@ repos=(
     hms/hms-hmi-nfd
     hms/hms-hmi-service
     hms/hms-meds
-    hms/hms-pmdbd
     hms/hms-reds
     hms/hms-scsd
     hms/hms-sls
@@ -82,6 +80,8 @@ cp -r cmd/* %{buildroot}%{commands}/
 %{commands}/*
 
 %changelog
+* Fri Jan 22 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+- Removed Badger and PMDBD repositories from HMS CT test deployment.
 * Wed Sep 16 2020 Mitch Schooler <mitchell.schooler@hpe.com>
 - Added support for CT testing from remote ct-pipelines containers.
 * Wed Jun 24 2020 Mitch Schooler <mitchell.schooler@hpe.com>
