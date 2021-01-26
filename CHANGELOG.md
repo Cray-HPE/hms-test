@@ -31,6 +31,7 @@ Security - in case of vulnerabilities
 - CASMHMS-4372 - Updated hms-pytest to use podman instead of containerd.
 - CASMHMS-4351 - Package and use HMS version of pod checker tool.
 - CASMHMS-4325 - Removed Badger and PMDBD repositories from HMS CT test deployment.
+- CASMHMS-4349 - Add HMS CT test runner scripts.
 
 ## [1.4.0] - 2021-01-14
 
