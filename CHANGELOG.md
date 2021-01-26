@@ -24,7 +24,7 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [1.5.0] - 2021-01-22
+## [1.5.0] - 2021-01-26
 
 ### Changed
 
