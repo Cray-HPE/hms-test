@@ -37,7 +37,7 @@
 #
 #     DATE STARTED         : 04/23/2019
 #
-#     LAST MODIFIED        : 01/21/2021
+#     LAST MODIFIED        : 01/29/2021
 #
 #     SYNOPSIS
 #       This library file contains BASH functions that are used and shared by
@@ -67,6 +67,8 @@
 #       schooler   07/27/2020   added run_check_pod_job_status function
 #       schooler   09/21/2020   updated for remote testing from ct-pipelines container
 #       schooler   01/21/2021   added HMS version of check_pod_status tool
+#       schooler   01/29/2021   added curl -k option for running on PIT nodes
+#       schooler   01/29/2021   specify python3 instead of python for parsing json
 #
 #     DEPENDENCIES
 #       None
@@ -129,7 +131,7 @@ function run_curl()
 {
     ((CURL_COUNT++))
     CURL_OUTFILE="${OUTPUT_FILES_PATH}.curl${CURL_COUNT}.tmp"
-    CURL_CMD="curl ${CURL_ARGS} -o ${CURL_OUTFILE} -X $@"
+    CURL_CMD="curl -k ${CURL_ARGS} -o ${CURL_OUTFILE} -X $@"
     _run_curl "${CURL_CMD}"
 }
 
@@ -232,7 +234,7 @@ function get_client_secret()
 #                         -d grant_type=client_credentials -d client_id=admin-client \
 #                         -d client_secret=be914011-91f5-4c84-bd06-88ec7f1bc00d \
 #                         https://api-gw-service-nmn.local/keycloak/realms/shasta/protocol/openid-connect/token \
-#                         | python -m json.tool
+#                         | python3 -m json.tool
 #      {
 #         "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSld...<snip>",
 #         "expires_in": 300,
@@ -252,7 +254,7 @@ function get_auth_token()
         return 1
     fi
     KEYCLOAK_TOKEN_URI="https://api-gw-service-nmn.local/keycloak/realms/shasta/protocol/openid-connect/token"
-    KEYCLOAK_TOKEN_CMD="curl -i -s -S -d grant_type=client_credentials -d client_id=admin-client -d client_secret=${CLIENT_SECRET} ${KEYCLOAK_TOKEN_URI}"
+    KEYCLOAK_TOKEN_CMD="curl -k -i -s -S -d grant_type=client_credentials -d client_id=admin-client -d client_secret=${CLIENT_SECRET} ${KEYCLOAK_TOKEN_URI}"
     >&2 echo $(timestamp_print "Running '${KEYCLOAK_TOKEN_CMD}'...")
     KEYCLOAK_TOKEN_OUT=$(eval ${KEYCLOAK_TOKEN_CMD})
     KEYCLOAK_TOKEN_RET=$?
@@ -269,7 +271,7 @@ function get_auth_token()
         return 1
     fi
     KEYCLOAK_TOKEN_JSON=$(echo "${KEYCLOAK_TOKEN_OUT}" | tail -n 1)
-    KEYCLOAK_TOKEN_JSON_PARSED=$(echo "${KEYCLOAK_TOKEN_JSON}" | python -m json.tool)
+    KEYCLOAK_TOKEN_JSON_PARSED=$(echo "${KEYCLOAK_TOKEN_JSON}" | python3 -m json.tool)
     KEYCLOAK_TOKEN_JSON_PARSED_CHECK=$?
     if [[ ${KEYCLOAK_TOKEN_JSON_PARSED_CHECK} -ne 0 ]] ; then
         >&2 echo -e "${KEYCLOAK_TOKEN_OUT}\n"
@@ -292,7 +294,7 @@ function extract_access_token()
         >&2 echo "ERROR: No authentication token argument passed to extract_access_token() function"
         return 1
     fi
-    ACCESS_TOKEN=$(python -c '
+    ACCESS_TOKEN=$(python3 -c '
 import json, sys
 js = json.loads(sys.argv[1])
 print(js["access_token"])
