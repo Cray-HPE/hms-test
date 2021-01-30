@@ -32,7 +32,7 @@ Security - in case of vulnerabilities
 - CASMHMS-4351 - Package and use HMS version of pod checker tool.
 - CASMHMS-4325 - Removed Badger and PMDBD repositories from HMS CT test deployment.
 - CASMHMS-4349 - Added HMS CT test runner scripts.
-- Changes to support testing on PIT nodes.
+- Added changes to support testing on PIT nodes.
 
 ## [1.4.0] - 2021-01-14
 
