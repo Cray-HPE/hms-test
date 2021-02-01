@@ -1,8 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # MIT License
 
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2021] Hewlett Packard Enterprise Development LP
 
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -22,24 +22,37 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Main
-WORKDIR=${PWD}
+if [ -z "$1" ]; then
+    echo "Please give one or more pod names"
+    exit 1
+fi
 
-# Pull latest release/shasta-1.4 hms-pytest image from DTR.
-IMAGE="dtr.dev.cray.com/cray/hms-pytest:1.4.0-20210201142835_952b105"
+# If given multiple pod names, grep for them all via regex
+PODS=""
+for POD in $@; do
+    PODS="$PODS\|$POD"
+done
+PODS_REGEX="\(${PODS: 2}\)"
 
-# hms-test CT library path containing shared python functions.
-HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
+# We're only filtering from the start of the pod name. Looking for exact
+# matches is tricky, since "api-gateway" and "api-gateway-database" both
+# have hashes appended to them, and the hashes are not fixed length. 
+LINES=$(kubectl get pods --all-namespaces | grep -e "^\S*\s*$PODS_REGEX")
 
-podman pull ${IMAGE}
+if [ "$LINES" == "" ]; then
+    echo "No pods found" 1>&2
+    exit 1
+fi
 
-podman run \
-    --rm \
-    --mount type=bind,src=/opt/cray/tests,dst=/opt/cray/tests,rw=true \
-    --mount type=bind,src=/etc/ssl/certs,dst=/etc/ssl/certs,ro=true \
-    --mount type=bind,src=/var/lib/ca-certificates/,dst=/var/lib/ca-certificates/,ro=true \
-    --env CURL_CA_BUNDLE=/var/lib/ca-certificates/ca-bundle.pem \
-    --env PYTHONPATH="${PYTHONPATH}:${HMS_TEST_REPO_DIR}" \
-    --workdir ${WORKDIR} \
-    ${IMAGE} \
-    pytest $@
+echo "$LINES"
+echo
+
+STATUSES=$(echo "$LINES" | awk '{print $4}' | sort | uniq | tr $'\n' ' ')
+echo "Pod status: $STATUSES"
+
+GOOD_STATUSES="Running Completed"
+for STATUS in $STATUSES; do
+    if ! echo "$GOOD_STATUSES" | grep -q "$STATUS"; then
+        exit 1
+    fi
+done
