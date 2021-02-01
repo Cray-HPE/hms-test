@@ -24,13 +24,21 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.5.0] - 2021-01-29
+
+### Changed
+
+- CASMHMS-4372 - Updated hms-pytest to use podman instead of containerd.
+- CASMHMS-4351 - Package and use HMS version of pod checker tool.
+- CASMHMS-4325 - Removed Badger and PMDBD repositories from HMS CT test deployment.
+- CASMHMS-4349 - Added HMS CT test runner scripts.
+- Made changes to support testing on PIT nodes.
 
 ## [1.4.0] - 2021-01-14
 
 ### Changed
 
 - Updated license file.
-
 
 ## [1.3.2] - 2020-12-01
 
