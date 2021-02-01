@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.5.1] - 2021-02-01
+
+### Changed
+
+- added MIT license to all files that required it.
+
 ## [1.5.0] - 2021-01-29
 
 ### Changed
