@@ -25,7 +25,7 @@
 # Main
 WORKDIR=${PWD}
 
-# Pull latest release/shasta-1.4 hms-pytest image from DTR.
+# Pull release/shasta-1.4 hms-pytest image from DTR.
 IMAGE="dtr.dev.cray.com/cray/hms-pytest:1.1.1"
 
 # hms-test CT library path containing shared python functions.
