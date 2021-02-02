@@ -24,32 +24,14 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [1.5.1] - 2021-02-01
-
-### Added
+## [1.3.2] - 2021-02-02
 
 - Added MIT license to all files that required it.
-
-## [1.5.0] - 2021-02-01
-
-### Changed
-
+- Made changes to support testing on PIT nodes.
 - CASMHMS-4372 - Updated hms-pytest to use podman instead of containerd.
 - CASMHMS-4351 - Package and use HMS version of pod checker tool.
 - CASMHMS-4325 - Removed Badger and PMDBD repositories from HMS CT test deployment.
 - CASMHMS-4349 - Added HMS CT test runner scripts.
-- Made changes to support testing on PIT nodes.
-
-## [1.4.0] - 2021-02-01
-
-### Changed
-
-- Updated license file.
-
-## [1.3.2] - 2021-02-01
-
-### Removed
-
 - CASMHMS-3717 - Removed the tavern-beta-new-traceback pytest option since it is now the default setting.
 
 ## [1.3.1] - 2020-11-16
