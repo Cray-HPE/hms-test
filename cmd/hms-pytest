@@ -31,7 +31,6 @@ WORKDIR=${PWD}
 # Pull release/shasta-1.4 hms-pytest image from local image registry.
 IMAGE="registry.local/cray/hms-pytest:1.1.1"
 
-
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
 
