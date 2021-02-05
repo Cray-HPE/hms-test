@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.3.3] - 2021-02-05
+
+### Changed
+
+- CASMHMS-4478 - Updated hms-pytest to pull image from local NCN registry instead of DTR.
+
 ## [1.3.2] - 2021-02-02
 
 ### Changed
