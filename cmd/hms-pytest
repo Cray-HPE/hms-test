@@ -25,9 +25,6 @@
 # Main
 WORKDIR=${PWD}
 
-#TODO
-# Pull release/shasta-1.4 hms-pytest image from DTR.
-#IMAGE="dtr.dev.cray.com/cray/hms-pytest:1.1.1"
 # Pull release/shasta-1.4 hms-pytest image from local image registry.
 IMAGE="registry.local/cray/hms-pytest:1.1.1"
 
