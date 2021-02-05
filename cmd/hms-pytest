@@ -28,7 +28,8 @@ WORKDIR=${PWD}
 #TODO
 # Pull hms-pytest image from DTR.
 #IMAGE="dtr.dev.cray.com/cray/hms-pytest:latest"
-IMAGE="registry.local/cray/hms-pytest:latest"
+# Pull hms-pytest image from local image registry.
+IMAGE="registry.local/cray/hms-pytest:1.1.1"
 
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
