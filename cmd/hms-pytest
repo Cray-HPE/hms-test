@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # MIT License
 
@@ -25,29 +25,15 @@
 # Main
 WORKDIR=${PWD}
 
-# Pull hms-pytest image from local registry, or DTR as a fallback.
-IMAGE="cray/hms-pytest:latest"
-LOCAL_TARGET="registry.local/${IMAGE}"
-REMOTE_TARGET="dtr.dev.cray.com/${IMAGE}"
+#TODO
+# Pull hms-pytest image from DTR.
+#IMAGE="dtr.dev.cray.com/cray/hms-pytest:latest"
+IMAGE="registry.local/cray/hms-pytest:1.1.1"
 
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
 
-IMAGE_PULLED=false
-for TARGET in ${LOCAL_TARGET} ${REMOTE_TARGET} ; do
-    PULL_CMD="podman pull ${TARGET}"
-    echo "Running '${PULL_CMD}'..."
-    ${PULL_CMD}
-    PULL_RET=$?
-    if [[ ${PULL_RET} -eq 0 ]] ; then
-        IMAGE_PULLED=true
-        break
-    fi
-done
-
-if ! ${IMAGE_PULLED} ; then
-    exit 1
-fi
+podman pull ${IMAGE}
 
 podman run \
     --rm \
@@ -57,5 +43,5 @@ podman run \
     --env CURL_CA_BUNDLE=/var/lib/ca-certificates/ca-bundle.pem \
     --env PYTHONPATH="${PYTHONPATH}:${HMS_TEST_REPO_DIR}" \
     --workdir ${WORKDIR} \
-    ${TARGET} \
+    ${IMAGE} \
     pytest $@
