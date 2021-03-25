@@ -49,14 +49,26 @@ echo
 
 while read LINE ; do
     JOB_NAME=$(echo "$LINE" | awk '{print $2}')
+    if [[ -z "${JOB_NAME}" ]] ; then
+        echo "Missing job name" 1>&2
+        exit 1
+    fi
     COMPLETIONS_COLUMN=$(echo "$LINE" | awk '{print $3}')
     COMPLETIONS_COLUMN_CHECK=$(echo "${COMPLETIONS_COLUMN}" | grep -E -o "[0-9]+/[0-9]+")
     if [[ -z "${COMPLETIONS_COLUMN_CHECK}" ]] ; then
-        echo "Missing jobs data" 1>&2
+        echo "Missing job data" 1>&2
         exit 1
     fi
-    COMPLETIONS=$(echo "${COMPLETIONS_COLUMN}" | cut -d "/" -f 1)
-    TOTAL=$(echo "${COMPLETIONS_COLUMN}" | cut -d "/" -f 2)
+    COMPLETIONS=$(echo "${COMPLETIONS_COLUMN}" | cut -d "/" -f 1 | grep -E -o "[0-9]+")
+    if [[ -z ${COMPLETIONS} ]] ; then
+        echo "Missing job completion value" 1>&2
+        exit 1
+    fi
+    TOTAL=$(echo "${COMPLETIONS_COLUMN}" | cut -d "/" -f 2 | grep -E -o "[0-9]+")
+    if [[ -z ${TOTAL} ]] ; then
+        echo "Missing job total value" 1>&2
+        exit 1
+    fi
     echo "${JOB_NAME} job completions: ${COMPLETIONS}/${TOTAL}"
     if [[ ${TOTAL} -eq 0 ]] ; then
         echo "Zero jobs found" 1>&2
