@@ -37,7 +37,7 @@
 #
 #     DATE STARTED         : 04/23/2019
 #
-#     LAST MODIFIED        : 01/29/2021
+#     LAST MODIFIED        : 03/25/2021
 #
 #     SYNOPSIS
 #       This library file contains BASH functions that are used and shared by
@@ -69,6 +69,7 @@
 #       schooler   01/21/2021   added HMS version of check_pod_status tool
 #       schooler   01/29/2021   added curl -k option for running on PIT nodes
 #       schooler   01/29/2021   specify python3 instead of python for parsing json
+#       schooler   03/25/2021   removed deprecated run_check_pod_job_status function
 #
 #     DEPENDENCIES
 #       None
@@ -346,74 +347,5 @@ function run_check_pod_status()
         echo "${CHECK_POD_STATUS_OUT}"
         >&2 echo "ERROR: '${CHECK_POD_STATUS_CMD}' failed with error code: ${CHECK_POD_STATUS_RET}"
         return 1
-    fi
-}
-
-# run_check_pod_job_status <job_token_string>
-function run_check_pod_job_status()
-{
-    JOB_TOKEN_STRING="${1}"
-    if [[ -z "${JOB_TOKEN_STRING}" ]] ; then
-        >&2 echo "ERROR: No job token string argument passed to run_check_pod_job_status() function"
-        return 1
-    fi
-    # HMS check_pod_status tool on NCN
-    CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
-    if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
-        >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-        # HMS check_pod_status tool in remote ct-pipelines container
-        CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
-        if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
-            >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-            # DST check_pod_status tool on NCN
-            CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/bin/check_pod_status"
-            if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
-                >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-                # DST check_pod_status tool in remote ct-pipelines container
-                CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/bin/check_pod_status"
-                if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
-                    >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_job_status(): ${CHECK_POD_STATUS_PATH}"
-                    return 1
-                fi
-            fi
-        fi
-    fi
-    CHECK_POD_STATUS_CMD="${CHECK_POD_STATUS_PATH} ${JOB_TOKEN_STRING}"
-    timestamp_print "Running '${CHECK_POD_STATUS_CMD}'..."
-    CHECK_POD_STATUS_OUT=$(${CHECK_POD_STATUS_CMD})
-    CHECK_POD_STATUS_RET=$?
-    if [[ ${CHECK_POD_STATUS_RET} -ne 0 ]] ; then
-        >&2 echo "INFO: '${CHECK_POD_STATUS_CMD}' returned status code: ${CHECK_POD_STATUS_RET}"
-        # pod isn't running, check if job previously completed
-        CHECK_JOB_STATUS_CMD="kubectl -n services get jobs | grep -E -i \"${JOB_TOKEN_STRING}\""
-        timestamp_print "Running '${CHECK_JOB_STATUS_CMD}'..."
-        CHECK_JOB_STATUS_OUT=$(eval ${CHECK_JOB_STATUS_CMD})
-        CHECK_JOB_STATUS_RET=$?
-        if [[ ${CHECK_JOB_STATUS_RET} -ne 0 ]] ; then
-            echo "${CHECK_JOB_STATUS_OUT}"
-            >&2 echo "ERROR: '${CHECK_JOB_STATUS_CMD}' failed with error code: ${CHECK_JOB_STATUS_RET}"
-            return 1
-        else
-            CHECK_JOB_COMPLETIONS=$(echo "${CHECK_JOB_STATUS_OUT}" | awk '{print $2}' | grep -E "[0-9]+/[0-9]+")
-            if [[ -z "${CHECK_JOB_COMPLETIONS}" ]] ; then
-                echo "${CHECK_JOB_STATUS_OUT}"
-                >&2 echo "ERROR: failed to extract job completion data from '${CHECK_JOB_STATUS_CMD}'"
-                return 1
-            else
-                JOB_COMPLETIONS=$(echo "${CHECK_JOB_COMPLETIONS}" | cut -d "/" -f 1)
-                JOBS_TOTAL=$(echo "${CHECK_JOB_COMPLETIONS}" | cut -d "/" -f 2)
-                if [[ ${JOBS_TOTAL} -eq 0 ]] ; then
-                    echo "${CHECK_JOB_STATUS_OUT}"
-                    >&2 echo "ERROR: no ${JOB_TOKEN_STRING} pods or jobs found"
-                    return 1
-                else
-                    if [[ ${JOB_COMPLETIONS} -ne ${JOBS_TOTAL} ]] ; then
-                        echo "${CHECK_JOB_STATUS_OUT}"
-                        >&2 echo "ERROR: incomplete ${JOB_TOKEN_STRING} jobs found: ${JOB_COMPLETIONS}/${JOBS_TOTAL}"
-                        return 1
-                    fi
-                fi
-            fi
-        fi
     fi
 }
