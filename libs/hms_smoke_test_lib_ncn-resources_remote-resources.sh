@@ -323,7 +323,7 @@ function run_check_pod_status()
     CHECK_POD_STATUS_PATH="/opt/cray/tests/ncn-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
     if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
         >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
-        # HMS check_pod_status tool in remote ct-pipelines container
+        # HMS check_pod_status tool in remote ct-portal container
         CHECK_POD_STATUS_PATH="/opt/cray/tests/remote-resources/hms/hms-test/hms_check_pod_status_ncn-resources_remote-resources.sh"
         if [[ ! -x ${CHECK_POD_STATUS_PATH} ]] ; then
             >&2 echo "ERROR: failed to locate executable check_pod_status tool in run_check_pod_status(): ${CHECK_POD_STATUS_PATH}"
@@ -353,7 +353,7 @@ function run_check_job_status()
     CHECK_JOB_STATUS_PATH="/opt/cray/tests/ncn-resources/hms/hms-test/hms_check_job_status_ncn-resources_remote-resources.sh"
     if [[ ! -x ${CHECK_JOB_STATUS_PATH} ]] ; then
         >&2 echo "ERROR: failed to locate executable check_job_status tool in run_check_job_status(): ${CHECK_JOB_STATUS_PATH}"
-        # HMS check_job_status tool in remote ct-pipelines container
+        # HMS check_job_status tool in remote ct-portal container
         CHECK_JOB_STATUS_PATH="/opt/cray/tests/remote-resources/hms/hms-test/hms_check_job_status_ncn-resources_remote-resources.sh"
         if [[ ! -x ${CHECK_JOB_STATUS_PATH} ]] ; then
             >&2 echo "ERROR: failed to locate executable check_job_status tool in run_check_job_status(): ${CHECK_JOB_STATUS_PATH}"
