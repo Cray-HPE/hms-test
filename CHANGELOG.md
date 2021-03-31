@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.5.3] - 2021-03-31
+
+### Added
+
+- CASMHMS-3973 - Added job checker tool and supporting infrastructure.
+
 ## [1.5.2] - 2021-02-05
 
 ### Changed
