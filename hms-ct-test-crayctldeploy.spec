@@ -30,8 +30,8 @@ Source: %{name}-%{version}.tar.bz2
 Vendor: Cray Inc.
 BuildRequires: git
 
-%define test_dir /opt/cray/tests
-%define commands /usr/bin
+%define TEST_DIR /opt/cray/tests
+%define COMMANDS /usr/bin
 
 %description
 This package contains files necessary to deploy the HMS CT tests.
@@ -40,8 +40,8 @@ This package contains files necessary to deploy the HMS CT tests.
 %setup -q
 
 %build
-repo_dir=$(mktemp -d)
-repos=(
+REPO_DIR=$(mktemp -d)
+REPOS=(
     hms/hms-bss
     hms/hms-capmc
     hms/hms-firmware-action
@@ -56,7 +56,7 @@ repos=(
     hms/hms-smd
     hms/hms-test
 )
-tests_list=(
+TEST_BUCKETS=(
     ncn-smoke
     ncn-functional
     ncn-long
@@ -69,38 +69,92 @@ tests_list=(
     remote-resources
 )
 
-echo "Copying CT tests to %{buildroot}%{test_dir}..."
+# Determine which branch to pull CT tests from
+CURRENT_BRANCH=$(git branch | grep -E "^\*" | cut -d " " -f 2)
+echo "Current branch is: ${CURRENT_BRANCH}"
+CURRENT_COMMIT=$(git rev-parse --verify HEAD)
+echo "Current commit is: ${CURRENT_COMMIT}"
 
-for repo in ${repos[@]} ; do
-    echo "Cloning $repo into $repo_dir/$repo..."
-    git clone --depth 1 https://stash.us.cray.com/scm/"$repo".git "${repo_dir}"/"${repo}"
+BRANCH_HIERARCHY=(
+    ${CURRENT_BRANCH}
+    develop
+    master
+)
 
-    for test in ${tests_list[@]} ; do
-        find ${repo_dir}/${repo} -name "*${test}*" -exec mkdir -p %{buildroot}%{test_dir}/${test}/${repo}/ \; \
-           -exec cp -v {} %{buildroot}%{test_dir}/${test}/${repo}/ \;
+# Check if we are building a PR in Jenkins
+CURRENT_BRANCH_PR_CHECK=$(echo ${CURRENT_BRANCH} | grep -E "^PR-[0-9]+")
+if [[ -n ${CURRENT_BRANCH_PR_CHECK} ]] ; then
+    BRANCHES_AT_HEAD=$(git ls-remote --heads origin | grep ${CURRENT_COMMIT} | awk '{print $2}')
+    echo "Branches at head commit: ${BRANCHES_AT_HEAD}"
+
+    # Remove non-feature branches
+    BRANCHES_AT_HEAD=$(echo "${BRANCHES_AT_HEAD}" | grep -v "master")
+    BRANCHES_AT_HEAD=$(echo "${BRANCHES_AT_HEAD}" | grep -v "develop")
+
+    while IFS= read -r BRANCH ; do
+        # Extract the branch name by removing 'refs/heads/' from the beginning of the line
+        BRANCH=$(echo ${BRANCH} | cut -c 12- )
+        echo "Adding branch '${BRANCH}' to branch hierarchy..."
+        BRANCH_HIERARCHY=(${BRANCH} ${BRANCH_HIERARCHY[@]})
+    done <<< "${BRANCHES_AT_HEAD}"
+fi
+
+echo "Branch Hierarchy: ${BRANCH_HIERARCHY[@]}"
+
+echo "Copying CT tests to %{buildroot}%{TEST_DIR}..."
+for REPO in ${REPOS[@]} ; do
+    echo "Cloning ${REPO} into ${REPO_DIR}/${REPO}..."
+    git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
+
+    echo "Changing directories into ${REPO_DIR}/${REPO}..."
+    cd ${REPO_DIR}/${REPO}
+    CURRENT_DIRECTORY=$(pwd)
+    echo "Current directory is: ${CURRENT_DIRECTORY}..."
+
+    for BRANCH in ${BRANCH_HIERARCHY[@]} ; do
+        echo "Attempting to checkout branch ${BRANCH}..."
+        git checkout ${BRANCH}
+        if [[ $? -eq 0 ]] ; then
+            echo "Successfully checked out branch ${BRANCH}..."
+            break
+        else
+            echo "Could not find branch ${BRANCH}..."
+            if [[ "${BRANCH}" == "master" ]] ; then
+                echo "All out of possible branches... exiting" >&2
+                exit 1
+            fi
+        fi
+    done
+
+    echo "Searching ${REPO_DIR}/${REPO} on branch ${BRANCH}for CT tests..."
+    for TEST in ${TEST_BUCKETS[@]} ; do
+        find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \; \
+           -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \;
     done
 done
 
 echo "Cleaning up temporary repo directory..."
-rm -rf ${repo_dir}
+rm -rf ${REPO_DIR}
 
 %install
-install -m 755 -d %{buildroot}%{commands}/
+install -m 755 -d %{buildroot}%{COMMANDS}/
 
 # All commands from this project
-cp -r cmd/* %{buildroot}%{commands}/
+cp -r cmd/* %{buildroot}%{COMMANDS}/
 
 %files
 
 # CT tests
-%dir %{test_dir}
-%{test_dir}/*
+%dir %{TEST_DIR}
+%{TEST_DIR}/*
 
 # CT-related commands
-%dir %{commands}
-%{commands}/*
+%dir %{COMMANDS}
+%{COMMANDS}/*
 
 %changelog
+* Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+- Updated spec file to be branch aware.
 * Tue Mar 30 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Added RTS repository to HMS CT test deployment.
 * Fri Jan 22 2021 Mitch Schooler <mitchell.schooler@hpe.com>
