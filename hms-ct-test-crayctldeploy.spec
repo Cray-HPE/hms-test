@@ -113,8 +113,8 @@ for REPO in ${REPOS[@]} ; do
 
     for BRANCH in ${BRANCH_HIERARCHY[@]} ; do
         echo "Attempting to checkout branch ${BRANCH}..."
-        git checkout ${BRANCH}
-        if [[ $? -eq 0 ]] ; then
+        git checkout ${BRANCH} || GIT_CHECKOUT_RET=$?
+        if [[ ${GIT_CHECKOUT_RET} -eq 0 ]] ; then
             echo "Successfully checked out branch ${BRANCH}..."
             break
         else
