@@ -82,8 +82,8 @@ BRANCH_HIERARCHY=(
 )
 
 # Check if we are building a PR in Jenkins
-echo ${CURRENT_BRANCH} | grep -E "^PR-[0-9]+"
-if [[ $? -eq 0 ]] ; then
+CURRENT_BRANCH_PR_CHECK=$(echo ${CURRENT_BRANCH} | grep -E "^PR-[0-9]+") || true
+if [[ -n ${CURRENT_BRANCH_PR_CHECK} ]] ; then
     BRANCHES_AT_HEAD=$(git ls-remote --heads origin | grep ${CURRENT_COMMIT} | awk '{print $2}')
     echo "Branches at head commit: ${BRANCHES_AT_HEAD}"
 
