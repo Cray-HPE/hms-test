@@ -49,6 +49,7 @@ repos=(
     hms/hms-hmi-nfd
     hms/hms-hmi-service
     hms/hms-meds
+    hms/hms-redfish-translation-layer
     hms/hms-reds
     hms/hms-scsd
     hms/hms-sls
@@ -100,6 +101,8 @@ cp -r cmd/* %{buildroot}%{commands}/
 %{commands}/*
 
 %changelog
+* Tue Mar 30 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+- Added RTS repository to HMS CT test deployment.
 * Fri Jan 22 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Removed Badger and PMDBD repositories from HMS CT test deployment.
 * Wed Sep 16 2020 Mitch Schooler <mitchell.schooler@hpe.com>
