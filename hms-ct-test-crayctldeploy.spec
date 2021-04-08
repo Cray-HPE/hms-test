@@ -72,7 +72,7 @@ TEST_BUCKETS=(
 # Determine which branch to pull CT tests from
 CURRENT_BRANCH=$(git branch | grep -E "^\*" | cut -d " " -f 2)
 #TODO
-CURRENT_BRANCH="master"
+CURRENT_BRANCH="PR-999999"
 echo "Current branch is: ${CURRENT_BRANCH}"
 CURRENT_COMMIT=$(git rev-parse --verify HEAD)
 echo "Current commit is: ${CURRENT_COMMIT}"
