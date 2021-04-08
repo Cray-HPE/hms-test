@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.6.0] - 2021-04-08
+
+### Changed
+
+- CASMHMS-4681 - Updated hms-test spec file to be branch aware.
+
 ## [1.5.3] - 2021-03-31
 
 ### Added
