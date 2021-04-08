@@ -71,6 +71,8 @@ TEST_BUCKETS=(
 
 # Determine which branch to pull CT tests from
 CURRENT_BRANCH=$(git branch | grep -E "^\*" | cut -d " " -f 2)
+#TODO
+CURRENT_BRANCH="release/csm-1.0"
 echo "Current branch is: ${CURRENT_BRANCH}"
 CURRENT_COMMIT=$(git rev-parse --verify HEAD)
 echo "Current commit is: ${CURRENT_COMMIT}"
@@ -127,7 +129,7 @@ for REPO in ${REPOS[@]} ; do
         fi
     done
 
-    echo "Searching ${REPO_DIR}/${REPO} on branch ${BRANCH}for CT tests..."
+    echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
     for TEST in ${TEST_BUCKETS[@]} ; do
         find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \; \
            -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \;
