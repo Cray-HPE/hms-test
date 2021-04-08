@@ -41,6 +41,8 @@ This package contains files necessary to deploy the HMS CT tests.
 
 %build
 REPO_DIR=$(mktemp -d)
+
+# HMS repositories to pull CT tests from
 REPOS=(
     hms/hms-bss
     hms/hms-capmc
@@ -56,6 +58,8 @@ REPOS=(
     hms/hms-smd
     hms/hms-test
 )
+
+# Categories of CT tests to pull
 TEST_BUCKETS=(
     ncn-smoke
     ncn-functional
@@ -71,8 +75,6 @@ TEST_BUCKETS=(
 
 # Determine which branch to pull CT tests from
 CURRENT_BRANCH=$(git branch | grep -E "^\*" | cut -d " " -f 2)
-#TODO
-CURRENT_BRANCH="PR-999999"
 echo "Current branch is: ${CURRENT_BRANCH}"
 CURRENT_COMMIT=$(git rev-parse --verify HEAD)
 echo "Current commit is: ${CURRENT_COMMIT}"
@@ -102,6 +104,7 @@ fi
 
 echo "Branch Hierarchy: ${BRANCH_HIERARCHY[@]}"
 
+# Find the CT tests in the HMS repositories on the target branch to package
 echo "Copying CT tests to %{buildroot}%{TEST_DIR}..."
 for REPO in ${REPOS[@]} ; do
     echo "Cloning ${REPO} into ${REPO_DIR}/${REPO}..."
@@ -156,7 +159,7 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 
 %changelog
 * Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
-- Updated spec file to be branch aware.
+- Updated hms-test spec file to be branch aware.
 * Tue Mar 30 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Added RTS repository to HMS CT test deployment.
 * Fri Jan 22 2021 Mitch Schooler <mitchell.schooler@hpe.com>
