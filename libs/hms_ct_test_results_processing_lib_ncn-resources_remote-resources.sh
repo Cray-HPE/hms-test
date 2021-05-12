@@ -23,6 +23,60 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 #TODO
+function get_test_entry_label_system_name()
+{
+    KUBECTL_SECRET_SITE_INIT_CMD="kubectl get secrets -n loftsman site-init -o jsonpath='{.data.customizations\.yaml}'"
+    KUBECTL_SECRET_SITE_INIT_OUT=$(eval "${KUBECTL_SECRET_SITE_INIT_CMD}")
+    KUBECTL_SECRET_SITE_INIT_RET=$?
+    if [[ ${KUBECTL_SECRET_SITE_INIT_RET} -ne 0 ]] ; then
+        >&2 echo "ERROR: '${KUBECTL_SECRET_SITE_INIT_CMD}' failed with error code: ${KUBECTL_SECRET_SITE_INIT_RET}"
+        return 1
+    fi
+    SYSTEM_NAME=$(echo "${KUBECTL_SECRET_SITE_INIT_OUT}" \
+        | base64 -d \
+        | grep -E -o "cluster_name: \S+$" \
+        | grep -E -o " \S+$" \
+        | tr -d " ")
+    if [[ -z "${SYSTEM_NAME}" ]] ; then
+        >&2 echo "ERROR: failed to extract system name from '${KUBECTL_SECRET_SITE_INIT_CMD}' output"
+        return 1
+    else
+        echo "${SYSTEM_NAME}"
+    fi
+}
+
+#TODO
+function get_test_entry_product_name()
+{
+    echo "csm"
+}
+
+#TODO
+function get_test_entry_product_version()
+{
+    KUBECTL_CM_PRODUCT_CATALOG_CMD="kubectl -n services get cm cray-product-catalog -o jsonpath='{.data.csm}'"
+    KUBECTL_CM_PRODUCT_CATALOG_OUT=$(eval "${KUBECTL_CM_PRODUCT_CATALOG_CMD}")
+    KUBECTL_CM_PRODUCT_CATALOG_RET=$?
+    if [[ ${KUBECTL_CM_PRODUCT_CATALOG_RET} -ne 0 ]] ; then
+        >&2 echo "ERROR: '${KUBECTL_CM_PRODUCT_CATALOG_CMD}' failed with error code: ${KUBECTL_CM_PRODUCT_CATALOG_RET}"
+        return 1
+    fi
+    PRODUCT_VERSION=$(echo "${KUBECTL_CM_PRODUCT_CATALOG_OUT}" \
+        | yq r -j - \
+        | jq -r 'keys[]' \
+        | sed '/-/!{s/$/_/}' \
+        | sort -V \
+        | sed 's/_$//' \
+        | tail -n 1)
+    if [[ -z "${PRODUCT_VERSION}" ]] ; then
+        >&2 echo "ERROR: failed to extract product version from '${KUBECTL_CM_PRODUCT_CATALOG_CMD}' output"
+        return 1
+    else
+        echo "${PRODUCT_VERSION}"
+    fi
+}
+
+#TODO
 # generate_results_report_triage_json <args>
 #
 # Arguments:

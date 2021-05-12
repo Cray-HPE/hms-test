@@ -72,6 +72,37 @@ else
 fi
 
 #TODO: results processing setup
+echo "setting up results processing..."
+SEND_RESULTS=true
+
+# get system name for test entry labels
+TEST_ENTRY_LABEL_SYSTEM=$(get_test_entry_label_system_name)
+TEST_ENTRY_LABEL_SYSTEM_RET=$?
+if [[ ${TEST_ENTRY_LABEL_SYSTEM_RET} -ne 0 ]] ; then
+    TEST_ENTRY_LABEL_SYSTEM="<system>"
+    SEND_RESULTS=false
+fi
+
+# get the system time for test entry labels
+TEST_ENTRY_LABEL_TIME=$(date +"%Y%m%dT%H%M%S")
+
+# get the product name for test entries
+TEST_ENTRY_PRODUCT_NAME=$(get_test_entry_product_name)
+TEST_ENTRY_PRODUCT_NAME_RET=$?
+if [[ ${TEST_ENTRY_PRODUCT_NAME_RET} -ne 0 ]] ; then
+    TEST_ENTRY_PRODUCT_NAME="<product>"
+    SEND_RESULTS=false
+fi
+
+# get the product version for test entries
+TEST_ENTRY_PRODUCT_VERSION=$(get_test_entry_product_version)
+TEST_ENTRY_PRODUCT_VERSION_RET=$?
+if [[ ${TEST_ENTRY_PRODUCT_VERSION_RET} -ne 0 ]] ; then
+    TEST_ENTRY_PRODUCT_VERSION="<version>"
+    SEND_RESULTS=false
+fi
+
+TMP_OUTFILE="/tmp/hms-ct-test-outfile"
 RESULTS_JSON=$(cat <<EOF
 {
 $(generate_results_report_triage_json true ct-failures false CASMHMS schooler none)
@@ -81,15 +112,13 @@ EOF
 
 # execute all HMS smoke tests
 NUM_FAILURES=0
-TEST_ENTRY_LABEL_TIME=$(date +"%Y%m%dT%H%M%S")
-#TODO
-TMP_OUTFILE="/tmp/hms-ct-test-outfile"
 echo "running HMS CT smoke tests..."
 echo
 echo "##############################################"
 echo
 for TEST in ${SMOKE_TESTS} ; do
     echo "running '${TEST}'..."
+    #TODO
     eval ${TEST} 2>&1 | tee ${TMP_OUTFILE}
     TEST_RET=${PIPESTATUS[0]}
     echo "'${TEST}' exited with status code: ${TEST_RET}"
@@ -101,12 +130,12 @@ for TEST in ${SMOKE_TESTS} ; do
     fi
     #TODO: results processing
     TEST_ENTRY_NAME="${TEST##*/}"
-    TEST_ENTRY_LABEL="<system>_${HOSTNAME}_${TEST_ENTRY_LABEL_TIME}"
+    TEST_ENTRY_LABEL="${TEST_ENTRY_LABEL_SYSTEM}_${HOSTNAME}_${TEST_ENTRY_LABEL_TIME}"
     TEST_ENTRY=$(generate_results_report_test_entry_json \
         ${TEST_ENTRY_NAME} \
         ${TEST_ENTRY_LABEL} \
-        sample_product_name \
-        sample_product_version \
+        ${TEST_ENTRY_PRODUCT_NAME} \
+        ${TEST_ENTRY_PRODUCT_VERSION} \
         ${TEST_ENTRY_STATUS} \
         ${TMP_OUTFILE})
     RESULTS_JSON="${RESULTS_JSON}
@@ -124,6 +153,16 @@ RESULTS_JSON="${RESULTS_JSON}
 
 # remove the trailing comma of the last test entry in the report
 RESULTS_JSON=$(echo "${RESULTS_JSON}" | sed -zr 's/,([^,]*$)/\1/')
+
+#TODO
+# verify that we have a valid JSON structure
+echo "verifying results JSON structure..."
+RESULTS_JSON_CHECK_OUT=$(echo "${RESULTS_JSON}" | jq)
+RESULTS_JSON_CHECK_RET=$?
+if [[ ${RESULTS_JSON_CHECK_RET} -ne 0 ]] ; then
+    >&2 echo "ERROR: generated invalid JSON structure for results processing"
+    SEND_RESULTS=false
+fi
 
 echo "RESULTS_JSON=
 ${RESULTS_JSON}"
