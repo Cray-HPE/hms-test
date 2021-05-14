@@ -22,24 +22,26 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+# verify_results_processing_api_connectivity
 function verify_results_processing_api_connectivity()
 {
     CURL_CMD="curl -s -X GET dashboard.us.cray.com:5050"
     CURL_OUT=$(eval ${CURL_CMD})
     CURL_RET=$?
     if [[ ${CURL_RET} -ne 0 ]] ; then
-        >&2 echo "ERROR: '${CURL_CMD}' failed with error code: ${CURL_RET}"
+        >&2 echo "ERROR: failed to connect to results processing API: '${CURL_CMD}' failed with error code: ${CURL_RET}"
         return 1
     fi
+
     QUERY_CHECK=$(echo "${CURL_OUT}" | jq '.success')
     if [[ -z "${QUERY_CHECK}" ]] ; then
-        >&2 echo "ERROR: failed to verify results processing API connectivity with '${CURL_CMD}', empty 'success' field"
+        >&2 echo "ERROR: failed to connect to results processing API with '${CURL_CMD}', empty 'success' response field"
         return 1
     elif [[ "${QUERY_CHECK}" == "null" ]] ; then
-        >&2 echo "ERROR: failed to verify results processing API connectivity with '${CURL_CMD}', null 'success' field"
+        >&2 echo "ERROR: failed to connect to results processing API with '${CURL_CMD}', null 'success' response field"
         return 1
     elif [[ "${QUERY_CHECK}" != "true" ]] ; then
-        >&2 echo "ERROR: failed to verify results processing API connectivity with '${CURL_CMD}', unexpected 'success' field: ${QUERY_CHECK}, expected: true"
+        >&2 echo "ERROR: failed to connect to results processing API with '${CURL_CMD}', unexpected 'success' response field: ${QUERY_CHECK}, expected: true"
         return 1
     fi
 }
@@ -112,7 +114,7 @@ function generate_results_report_triage_json()
 {
     TRIAGE_SLACK_ENABLED=$(echo "${1}" | grep -E "true|false")
     if [[ -z "${TRIAGE_SLACK_ENABLED}" ]] ; then
-        >&2 echo "ERROR: invalid TRIAGE_SLACK_ENABLED setting: '${TRIAGE_SLACK_ENABLED}', must be 'true' or 'false'"
+        >&2 echo "ERROR: invalid TRIAGE_SLACK_ENABLED setting, must be 'true' or 'false'"
         return 1
     fi
 
@@ -124,7 +126,7 @@ function generate_results_report_triage_json()
 
     TRIAGE_JIRA_ENABLED=$(echo "${3}" | grep -E "true|false")
     if [[ -z "${TRIAGE_JIRA_ENABLED}" ]] ; then
-        >&2 echo "ERROR: invalid TRIAGE_JIRA_ENABLED setting: '${TRIAGE_JIRA_ENABLED}', must be 'true' or 'false'"
+        >&2 echo "ERROR: invalid TRIAGE_JIRA_ENABLED setting, must be 'true' or 'false'"
         return 1
     fi
 
@@ -252,4 +254,52 @@ EOF
 )
     # Note: the trailing comma above needs to be removed for the last test entry in the report to form valid JSON
     echo "${TEST_ENTRY_JSON}"
+}
+
+# ship_test_results results_file_path
+function ship_test_results()
+{
+    RESULTS_FILE_PATH="${1}"
+    if [[ -z "${RESULTS_FILE_PATH}" ]] ; then
+        >&2 echo "ERROR: missing results json file path"
+        return 1
+    elif [[ ! -f ${RESULTS_FILE_PATH} ]] ; then
+        >&2 echo "ERROR: missing results json file: ${RESULTS_FILE_PATH}"
+        return 1
+    elif [[ ! -r ${RESULTS_FILE_PATH} ]] ; then
+        >&2 echo "ERROR: unreadable results json file: ${RESULTS_FILE_PATH}"
+        return 1
+    fi
+
+    CURL_CMD="curl -s dashboard.us.cray.com:5050 -d @${RESULTS_FILE_PATH}"
+    CURL_OUT=$(eval ${CURL_CMD})
+    CURL_RET=$?
+    if [[ ${CURL_RET} -ne 0 ]] ; then
+        >&2 echo "ERROR: failed to ship test results, '${CURL_CMD}' failed with error code: ${CURL_RET}"
+        return 1
+    fi
+
+    SHIP_CHECK=$(echo "${CURL_OUT}" | jq '.success')
+    if [[ -z "${SHIP_CHECK}" ]] ; then
+        >&2 echo "ERROR: failed to ship test results with '${CURL_CMD}', empty 'success' response field"
+        return 1
+    elif [[ "${SHIP_CHECK}" == "null" ]] ; then
+        >&2 echo "ERROR: failed to ship test results with '${CURL_CMD}', null 'success' response field"
+        return 1
+    elif [[ "${SHIP_CHECK}" != "true" ]] ; then
+        >&2 echo "ERROR: failed to ship test results with '${CURL_CMD}', unexpected 'success' response field: ${SHIP_CHECK}, expected: true"
+        return 1
+    fi
+
+    RUN_ID=$(echo "${CURL_OUT}" | jq -r '.artifacts.run_id')
+    if [[ -z "${RUN_ID}" ]] ; then
+        >&2 echo "ERROR: empty run_id artifact in results API response"
+        return 1
+    elif [[ "${RUN_ID}" == "null" ]] ; then
+        >&2 echo "ERROR: null run_id artifact in results API response"
+        return 1
+    else
+        RUN_URL="http://dashboard.us.cray.com/run/${RUN_ID}"
+        echo "${RUN_URL}"
+    fi
 }

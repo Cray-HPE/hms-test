@@ -24,10 +24,18 @@
 
 DASHP=false
 SEND_RESULTS=false
+TMP_OUTFILE="/tmp/hms-ct-test-temp-outfile"
 
 # parse command-line options
-while getopts "p" opt; do
+while getopts "hp" opt; do
     case ${opt} in
+        h) echo "Usage: hms_run_ct_smoke_tests_ncn-resources.sh [-h] [-p]"
+           echo
+           echo "Arguments:"
+           echo "    -h        display this help message"
+           echo "    -p        enable results processing"
+           exit 0
+           ;;
         p) DASHP=true
            ;;
     esac
@@ -91,7 +99,6 @@ else
 fi
 
 if ${SEND_RESULTS} ; then
-    #TODO: results processing setup
     echo "setting up results processing..."
 
     # get system name for test entry labels
@@ -121,10 +128,22 @@ if ${SEND_RESULTS} ; then
         SEND_RESULTS=false
     fi
 
-    TMP_OUTFILE="/tmp/hms-ct-test-outfile"
+    # generate the triage section of the results report json
+    RESULTS_REPORT_TRIAGE_JSON_OUT=$(generate_results_report_triage_json true ct-failures false CASMHMS schooler none)
+    RESULTS_REPORT_TRIAGE_JSON_RET=$?
+    if [[ ${RESULTS_REPORT_TRIAGE_JSON_RET} -ne 0 ]] ; then
+        RESULTS_REPORT_TRIAGE_JSON_OUT=$(cat <<EOF
+    "triage": {
+    }
+EOF
+)
+        SEND_RESULTS=false
+    fi
+
+    # initialize the results json
     RESULTS_JSON=$(cat <<EOF
 {
-$(generate_results_report_triage_json true ct-failures false CASMHMS schooler none)
+${RESULTS_REPORT_TRIAGE_JSON_OUT}
     "tests": [
 EOF
 )
@@ -147,19 +166,22 @@ for TEST in ${SMOKE_TESTS} ; do
     else
         TEST_ENTRY_STATUS="pass"
     fi
-    #TODO: results processing
+
     if ${SEND_RESULTS} ; then
         TEST_ENTRY_NAME="${TEST##*/}"
         TEST_ENTRY_LABEL="${TEST_ENTRY_LABEL_SYSTEM}_${HOSTNAME}_${TEST_ENTRY_LABEL_TIME}"
-        TEST_ENTRY=$(generate_results_report_test_entry_json \
+        TEST_ENTRY_OUT=$(generate_results_report_test_entry_json \
             ${TEST_ENTRY_NAME} \
             ${TEST_ENTRY_LABEL} \
             ${TEST_ENTRY_PRODUCT_NAME} \
             ${TEST_ENTRY_PRODUCT_VERSION} \
             ${TEST_ENTRY_STATUS} \
             ${TMP_OUTFILE})
-        RESULTS_JSON="${RESULTS_JSON}
-${TEST_ENTRY}"
+        TEST_ENTRY_RET=$?
+        if [[ ${TEST_ENTRY_RET} -eq 0 ]] ; then
+            RESULTS_JSON="${RESULTS_JSON}
+${TEST_ENTRY_OUT}"
+        fi
     fi
     rm -f ${TMP_OUTFILE}
     echo
@@ -172,7 +194,6 @@ if ${SEND_RESULTS} ; then
     RESULTS_JSON="${RESULTS_JSON}
     ]
 }"
-
     # remove the trailing comma of the last test entry in the report
     RESULTS_JSON=$(echo "${RESULTS_JSON}" | sed -zr 's/,([^,]*$)/\1/')
 
@@ -184,19 +205,30 @@ if ${SEND_RESULTS} ; then
         >&2 echo "ERROR: generated invalid JSON structure for results processing"
         SEND_RESULTS=false
     fi
-
-    echo "RESULTS_JSON=
-${RESULTS_JSON}"
-    echo
 fi
-
-#TODO
-echo "SEND_RESULTS=${SEND_RESULTS}"
 
 # final check
 if ${SEND_RESULTS} ; then
-    echo "TODO: call send_results function"
-    #TODO: call send_results function
+    echo "shipping test results..."
+    # write results json to output file
+    RESULTS_FILE="/tmp/hms-ct-test-results.json"
+    echo "${RESULTS_JSON}" > ${RESULTS_FILE}
+
+    # ship the results json to the results API for processing and storage
+    SHIP_TEST_RESULTS_OUT=$(ship_test_results ${RESULTS_FILE})
+    SHIP_TEST_RESULTS_RET=$?
+    if [[ ${SHIP_TEST_RESULTS_RET} -eq 0 ]] ; then
+        echo "results processed successfully and available at: ${SHIP_TEST_RESULTS_OUT}"
+    fi
+    echo
+
+    # clean up results file
+    rm -f ${RESULTS_FILE}
+else
+    if ${DASHP} ; then
+        echo "skipping test results processing..."
+        echo
+    fi
 fi
 
 # check for failures
