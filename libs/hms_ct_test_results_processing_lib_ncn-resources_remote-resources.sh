@@ -232,8 +232,16 @@ function generate_results_report_test_entry_json()
     TEST_ENTRY_OUTPUT=$(cat ${TEST_ENTRY_OUTPUT_FILE_PATH})
     # save space by not storing long and repeated keycloak tokens
     TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E 's/Authorization: Bearer \S+ /Authorization: Bearer \${TOKEN} /g')
-    # only capture failure or error output since we are limited to 5000 characters per entry
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -i "fail|error|warn|unexpected|fatal|critical|skip")
+    # only capture failure, error, or summary output since we are limited to 5000 characters per entry
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -i "fail|error|warn|alert|unexpected|fatal|critical|skip|Enum '\S+' does not exist.|short test summary info|[0-9]+ passed in")
+    # remove extraneous characters from tavern output lines for tests that passed
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E '/=+ [0-9]+ passed in [0-9]+\.[0-9]+s.* =+/s/=//g' | sed 's/^[ \t]*//;s/[ \t]*$//')
+    # exclude tavern output of entire API json responses since they are huge and won't fit
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "tavern.schemas.files.*Error validating {.*}")
+    # exclude these tavern messages since they aren't helpful for debugging failures
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "Error calling validate function '.*'|BadSchemaError|raise SchemaError")
+    # more tavern output messages to exclude that don't provide useful information
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "pykwalify.core:core.py:[0-9]+")
     # replace double quotes with single quotes that can be parsed as json
     TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | tr "\"" "'")
     # remove unescaped newline and carriage return characters that cause parsing problems
