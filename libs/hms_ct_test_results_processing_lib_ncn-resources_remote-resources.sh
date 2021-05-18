@@ -85,13 +85,16 @@ function get_test_entry_product_version()
         >&2 echo "ERROR: '${KUBECTL_CM_PRODUCT_CATALOG_CMD}' failed with error code: ${KUBECTL_CM_PRODUCT_CATALOG_RET}"
         return 1
     fi
-    PRODUCT_VERSION=$(echo "${KUBECTL_CM_PRODUCT_CATALOG_OUT}" \
-        | yq r -j - \
-        | jq -r 'keys[]' \
-        | sed '/-/!{s/$/_/}' \
-        | sort -V \
-        | sed 's/_$//' \
-        | tail -n 1)
+    # TODO: DST-8043
+    #PRODUCT_VERSION=$(echo "${KUBECTL_CM_PRODUCT_CATALOG_OUT}" \
+    #    | yq r -j - \
+    #    | jq -r 'keys[]' \
+    #    | sed '/-/!{s/$/_/}' \
+    #    | sort -V \
+    #    | sed 's/_$//' \
+    #    | tail -n 1)
+    # this method is different than the CSM upgrade document and doesn't use yq which isn't installed in ct-portal
+    PRODUCT_VERSION=$(echo "${KUBECTL_CM_PRODUCT_CATALOG_OUT}" | grep -E "^\S+:$" | tr -d ":" | sort -V | tail -n 1)
     if [[ -z "${PRODUCT_VERSION}" ]] ; then
         >&2 echo "ERROR: failed to extract product version from '${KUBECTL_CM_PRODUCT_CATALOG_CMD}' output"
         return 1
@@ -230,18 +233,14 @@ function generate_results_report_test_entry_json()
 
     # process the test entry output
     TEST_ENTRY_OUTPUT=$(cat ${TEST_ENTRY_OUTPUT_FILE_PATH})
-    # save space by not storing long and repeated keycloak tokens
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E 's/Authorization: Bearer \S+ /Authorization: Bearer \${TOKEN} /g')
-    # only capture failure, error, or summary output since we are limited to 5000 characters per entry
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -i "fail|error|warn|alert|unexpected|fatal|critical|skip|Enum '\S+' does not exist.|short test summary info|[0-9]+ passed in")
-    # remove extraneous characters from tavern output lines for tests that passed
+    # only capture test result summary information since we are limited to 5000 characters per results report
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E "ERROR:.*hms_check_pod_status|ERROR:.*hms_check_job_status|MAIN_ERRORS|ran with failures|[0-9]+ passed in|[0-9]+ failed in")
+    # remove extraneous characters from tavern output lines when all tests pass
     TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E '/=+ [0-9]+ passed in [0-9]+\.[0-9]+s.* =+/s/=//g' | sed 's/^[ \t]*//;s/[ \t]*$//')
-    # exclude tavern output of entire API json responses since they are huge and won't fit
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "tavern.schemas.files.*Error validating {.*}")
-    # exclude these tavern messages since they aren't helpful for debugging failures
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "Error calling validate function '.*'|BadSchemaError|raise SchemaError")
-    # more tavern output messages to exclude that don't provide useful information
-    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | grep -E -v "pykwalify.core:core.py:[0-9]+")
+    # remove extraneous characters from tavern output lines when all tests fail
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E '/=+ [0-9]+ failed in [0-9]+\.[0-9]+s.* =+/s/=//g' | sed 's/^[ \t]*//;s/[ \t]*$//')
+    # remove extraneous characters from tavern output lines when some tests pass and some tests fail
+    TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | sed -E '/=+ [0-9]+ failed, [0-9]+ passed in [0-9]+\.[0-9]+s.* =+/s/=//g' | sed 's/^[ \t]*//;s/[ \t]*$//')
     # replace double quotes with single quotes that can be parsed as json
     TEST_ENTRY_OUTPUT=$(echo "${TEST_ENTRY_OUTPUT}" | tr "\"" "'")
     # remove unescaped newline and carriage return characters that cause parsing problems

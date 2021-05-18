@@ -190,13 +190,12 @@ ${TEST_ENTRY_OUT}"
 done
 
 if ${SEND_RESULTS} ; then
+    # remove the trailing comma of the last test entry in the report
+    RESULTS_JSON=$(echo "${RESULTS_JSON}" | sed '$s/,$//')
     # close off the results JSON structure
     RESULTS_JSON="${RESULTS_JSON}
     ]
 }"
-    # remove the trailing comma of the last test entry in the report
-    RESULTS_JSON=$(echo "${RESULTS_JSON}" | sed -zr 's/,([^,]*$)/\1/')
-
     # verify that we have a valid JSON structure
     echo "verifying results JSON structure..."
     RESULTS_JSON_CHECK_OUT=$(echo "${RESULTS_JSON}" | jq)
