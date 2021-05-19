@@ -206,7 +206,7 @@ if ${SEND_RESULTS} ; then
     fi
 fi
 
-# final check
+# final check before shipping test results
 if ${SEND_RESULTS} ; then
     echo "${RESULTS_JSON}"
     echo "shipping test results..."
