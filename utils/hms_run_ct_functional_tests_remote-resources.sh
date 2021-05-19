@@ -206,11 +206,9 @@ if ${SEND_RESULTS} ; then
     fi
 fi
 
-#TODO
-echo "RESULTS_JSON=${RESULTS_JSON}"
-
 # final check
 if ${SEND_RESULTS} ; then
+    echo "${RESULTS_JSON}"
     echo "shipping test results..."
     # write results json to output file
     RESULTS_FILE="/tmp/hms-ct-test-results.json"

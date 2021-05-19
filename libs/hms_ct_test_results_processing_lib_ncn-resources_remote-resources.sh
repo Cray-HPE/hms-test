@@ -93,7 +93,7 @@ function get_test_entry_product_version()
     #    | sort -V \
     #    | sed 's/_$//' \
     #    | tail -n 1)
-    # this method is different than the CSM upgrade document and doesn't use yq which isn't installed in ct-portal
+    # this method is different than the CSM upgrade document command above and doesn't use yq which isn't installed in ct-portal
     PRODUCT_VERSION=$(echo "${KUBECTL_CM_PRODUCT_CATALOG_OUT}" | grep -E "^\S+:$" | tr -d ":" | sort -V | tail -n 1)
     if [[ -z "${PRODUCT_VERSION}" ]] ; then
         >&2 echo "ERROR: failed to extract product version from '${KUBECTL_CM_PRODUCT_CATALOG_CMD}' output"
