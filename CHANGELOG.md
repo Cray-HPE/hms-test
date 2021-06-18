@@ -24,6 +24,11 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.8.0] - 2021-06-18
+
+### Changed
+- Bump minor version for CSM 1.2 release branch
+
 ## [1.7.0] - 2021-06-18
 
 ### Changed

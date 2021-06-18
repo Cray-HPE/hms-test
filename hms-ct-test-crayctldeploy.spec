@@ -159,6 +159,8 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 
 %changelog
 * Fri Jun 18 2021 Ryan Sjostrand <sjostrand@hpe.com>
+- Bump minor version for CSM 1.2 release branch
+* Fri Jun 18 2021 Ryan Sjostrand <sjostrand@hpe.com>
 - Bump minor version for CSM 1.1 release branch
 * Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test spec file to be branch aware.
