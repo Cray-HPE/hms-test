@@ -30,7 +30,7 @@ RPM_SOURCE_NAME ?= ${RPM_NAME}-${RPM_VERSION}
 RPM_BUILD_DIR ?= $(PWD)/dist/rpmbuild
 RPM_SOURCE_PATH := ${RPM_BUILD_DIR}/SOURCES/${RPM_SOURCE_NAME}.tar.bz2
 
-build: rpm_package_source rpm_build_source rpm_build
+build: rpm_prepare rpm_package_source rpm_build_source rpm_build
 
 rpm_prepare:
 	rm -rf $(RPM_BUILD_DIR)
