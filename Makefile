@@ -23,9 +23,8 @@
 # RPM
 SPEC_NAME ?= hms-ct-test-crayctldeploy
 RPM_NAME ?= hms-ct-test-crayctldeploy
-RPM_VERSION ?= $(shell cat .rpm_version)
+RPM_VERSION ?= $(shell cat .version)
 SPEC_FILE ?= ${SPEC_NAME}.spec
-SPEC_VERSION ?= $(shell cat .rpm_version)
 BUILD_METADATA ?= "1~development~$(shell git rev-parse --short HEAD)"
 RPM_SOURCE_NAME ?= ${RPM_NAME}-${RPM_VERSION}
 RPM_BUILD_DIR ?= $(PWD)/dist/rpmbuild
