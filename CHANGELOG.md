@@ -24,9 +24,16 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.7.1] - 2021-07-22
+
+### Added
+
+- Added new Jenkinsfile and Makefile for migration to GitHub from Stash.
+
 ## [1.7.0] - 2021-06-18
 
 ### Changed
+
 - Bump minor version for CSM 1.1 release branch
 
 ## [1.6.0] - 2021-04-08
