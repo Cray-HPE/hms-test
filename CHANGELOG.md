@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.6.1] - 2021-07-22
+
+### Added
+
+- Added new Jenkinsfile and Makefile for migration to GitHub from Stash.
+
 ## [1.6.0] - 2021-04-08
 
 ### Changed
