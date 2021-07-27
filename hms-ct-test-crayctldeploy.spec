@@ -44,19 +44,19 @@ REPO_DIR=$(mktemp -d)
 
 # HMS repositories to pull CT tests from
 REPOS=(
-    hms/hms-bss
-    hms/hms-capmc
-    hms/hms-firmware-action
-    hms/hms-hmcollector
-    hms/hms-hmi-nfd
-    hms/hms-hmi-service
-    hms/hms-meds
-    hms/hms-redfish-translation-layer
-    hms/hms-reds
-    hms/hms-scsd
-    hms/hms-sls
-    hms/hms-smd
-    hms/hms-test
+    hms-bss
+    hms-capmc
+    hms-firmware-action
+    hms-hmcollector
+    hms-hmi-nfd
+    hms-hmi-service
+    hms-meds
+    hms-redfish-translation-layer
+    hms-reds
+    hms-scsd
+    hms-sls
+    hms-smd
+    hms-test
 )
 
 # Categories of CT tests to pull
@@ -107,11 +107,13 @@ echo "Branch Hierarchy: ${BRANCH_HIERARCHY[@]}"
 # Find the CT tests in the HMS repositories on the target branch to package
 echo "Copying CT tests to %{buildroot}%{TEST_DIR}..."
 for REPO in ${REPOS[@]} ; do
-    echo "Cloning ${REPO} into ${REPO_DIR}/${REPO}..."
-    git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
+    echo "Cloning hms/${REPO} into ${REPO_DIR}/hms/${REPO}..."
+    #TODO
+    #git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
+    git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/"${REPO}".git "${REPO_DIR}"/hms/"${REPO}"
 
-    echo "Changing directories into ${REPO_DIR}/${REPO}..."
-    cd ${REPO_DIR}/${REPO}
+    echo "Changing directories into ${REPO_DIR}/hms/${REPO}..."
+    cd ${REPO_DIR}/hms/${REPO}
     CURRENT_DIRECTORY=$(pwd)
     echo "Current directory is: ${CURRENT_DIRECTORY}..."
 
@@ -131,10 +133,10 @@ for REPO in ${REPOS[@]} ; do
         fi
     done
 
-    echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
+    echo "Searching ${REPO_DIR}/hms/${REPO} on branch '${BRANCH}' for CT tests..."
     for TEST in ${TEST_BUCKETS[@]} ; do
-        find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \; \
-           -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \;
+        find ${REPO_DIR}/hms/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \; \
+           -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \;
     done
 done
 
