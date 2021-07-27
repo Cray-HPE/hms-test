@@ -110,6 +110,7 @@ for REPO in ${REPOS[@]} ; do
     echo "Cloning hms/${REPO} into ${REPO_DIR}/hms/${REPO}..."
     #TODO
     #git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
+    export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
     git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/"${REPO}".git "${REPO_DIR}"/hms/"${REPO}"
 
     echo "Changing directories into ${REPO_DIR}/hms/${REPO}..."
