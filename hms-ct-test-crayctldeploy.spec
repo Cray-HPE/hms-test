@@ -107,19 +107,10 @@ echo "Branch Hierarchy: ${BRANCH_HIERARCHY[@]}"
 # Find the CT tests in the HMS repositories on the target branch to package
 echo "Copying CT tests to %{buildroot}%{TEST_DIR}..."
 for REPO in ${REPOS[@]} ; do
-    #TODO
-    #echo "Cloning hms/${REPO} into ${REPO_DIR}/hms/${REPO}..."
     echo "Cloning ${REPO} into ${REPO_DIR}/${REPO}..."
-    #TODO
-    #git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
-    #git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/"${REPO}".git "${REPO_DIR}"/hms/"${REPO}"
     git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/"${REPO}".git "${REPO_DIR}"/"${REPO}"
 
-    #TODO
-    #echo "Changing directories into ${REPO_DIR}/hms/${REPO}..."
     echo "Changing directories into ${REPO_DIR}/${REPO}..."
-    #TODO
-    #cd ${REPO_DIR}/hms/${REPO}
     cd ${REPO_DIR}/${REPO}
     CURRENT_DIRECTORY=$(pwd)
     echo "Current directory is: ${CURRENT_DIRECTORY}..."
@@ -140,13 +131,8 @@ for REPO in ${REPOS[@]} ; do
         fi
     done
 
-    #TODO
-    #echo "Searching ${REPO_DIR}/hms/${REPO} on branch '${BRANCH}' for CT tests..."
     echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
     for TEST in ${TEST_BUCKETS[@]} ; do
-        #TODO
-        #find ${REPO_DIR}/hms/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \; \
-        #   -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \;
         find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \; \
            -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \;
     done
