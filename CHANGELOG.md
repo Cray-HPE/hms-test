@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.7.2] - 2021-07-28
+
+### Changed
+
+- GitHub migration phase #3 changes.
+
 ## [1.7.1] - 2021-07-22
 
 ### Added
@@ -34,7 +40,7 @@ Security - in case of vulnerabilities
 
 ### Changed
 
-- Bump minor version for CSM 1.1 release branch
+- Bump minor version for CSM 1.1 release branch.
 
 ## [1.6.0] - 2021-04-08
 
