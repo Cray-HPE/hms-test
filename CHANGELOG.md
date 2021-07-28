@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.6.2] - 2021-07-28
+
+### Changed
+
+- GitHub migration phase #3 changes.
+
 ## [1.6.1] - 2021-07-22
 
 ### Added
