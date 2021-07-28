@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sshagent(credentials: ["jenkins-hms-readonly"]) {
+                sshagent(credentials: ["deploykey-readonly-hms-bss"]) {
                     sh "make build"
                 }
             }
