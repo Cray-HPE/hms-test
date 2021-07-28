@@ -23,16 +23,16 @@ pipeline {
                 sshagent(credentials: [\
                     "deploykey-readonly-hms-bss",\
                     "deploykey-readonly-hms-capmc",\
-                    "deploykey-readonly-hms-firmware-action"\
-                    "deploykey-readonly-hms-hmcollector"\
-                    "deploykey-readonly-hms-hmi-nfd"\
-                    "deploykey-readonly-hms-hmi-service"\
-                    "deploykey-readonly-hms-meds"\
-                    "deploykey-readonly-hms-redfish-translation-layer"\
-                    "deploykey-readonly-hms-reds"\
-                    "deploykey-readonly-hms-scsd"\
-                    "deploykey-readonly-hms-sls"\
-                    "deploykey-readonly-hms-smd"\
+                    "deploykey-readonly-hms-firmware-action",\
+                    "deploykey-readonly-hms-hmcollector",\
+                    "deploykey-readonly-hms-hmi-nfd",\
+                    "deploykey-readonly-hms-hmi-service",\
+                    "deploykey-readonly-hms-meds",\
+                    "deploykey-readonly-hms-redfish-translation-layer",\
+                    "deploykey-readonly-hms-reds",\
+                    "deploykey-readonly-hms-scsd",\
+                    "deploykey-readonly-hms-sls",\
+                    "deploykey-readonly-hms-smd",\
                     "deploykey-readonly-hms-test"\
                 ]) {
                     sh "make build"
