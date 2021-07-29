@@ -20,7 +20,9 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sh "make build"
+                withCredentials([gitUsernamePassword(credentialsId: 'jenkins-algol60-cray-hpe-github-integration')]) {
+                    sh "make build"
+                }
             }
         }
 
