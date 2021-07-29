@@ -44,19 +44,19 @@ REPO_DIR=$(mktemp -d)
 
 # HMS repositories to pull CT tests from
 REPOS=(
-    hms/hms-bss
-    hms/hms-capmc
-    hms/hms-firmware-action
-    hms/hms-hmcollector
-    hms/hms-hmi-nfd
-    hms/hms-hmi-service
-    hms/hms-meds
-    hms/hms-redfish-translation-layer
-    hms/hms-reds
-    hms/hms-scsd
-    hms/hms-sls
-    hms/hms-smd
-    hms/hms-test
+    hms-bss
+    hms-capmc
+    hms-firmware-action
+    hms-hmcollector
+    hms-hmi-nfd
+    hms-hmi-service
+    hms-meds
+    hms-redfish-translation-layer
+    hms-reds
+    hms-scsd
+    hms-sls
+    hms-smd
+    hms-test
 )
 
 # Categories of CT tests to pull
@@ -108,7 +108,7 @@ echo "Branch Hierarchy: ${BRANCH_HIERARCHY[@]}"
 echo "Copying CT tests to %{buildroot}%{TEST_DIR}..."
 for REPO in ${REPOS[@]} ; do
     echo "Cloning ${REPO} into ${REPO_DIR}/${REPO}..."
-    git clone --depth 1 --no-single-branch https://stash.us.cray.com/scm/"${REPO}".git "${REPO_DIR}"/"${REPO}"
+    git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/"${REPO}".git "${REPO_DIR}"/"${REPO}"
 
     echo "Changing directories into ${REPO_DIR}/${REPO}..."
     cd ${REPO_DIR}/${REPO}
@@ -133,8 +133,8 @@ for REPO in ${REPOS[@]} ; do
 
     echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
     for TEST in ${TEST_BUCKETS[@]} ; do
-        find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \; \
-           -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/${REPO}/ \;
+        find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \; \
+           -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \;
     done
 done
 
@@ -158,10 +158,12 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 %{COMMANDS}/*
 
 %changelog
+* Wed Jul 28 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+- Updated hms-test repository for migration to GitHub.
 * Fri Jun 18 2021 Ryan Sjostrand <sjostrand@hpe.com>
-- Bump minor version for CSM 1.2 release branch
+- Bump minor version for CSM 1.2 release branch.
 * Fri Jun 18 2021 Ryan Sjostrand <sjostrand@hpe.com>
-- Bump minor version for CSM 1.1 release branch
+- Bump minor version for CSM 1.1 release branch.
 * Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test spec file to be branch aware.
 * Tue Mar 30 2021 Mitch Schooler <mitchell.schooler@hpe.com>
