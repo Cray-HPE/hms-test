@@ -13,7 +13,7 @@ pipeline {
     environment {
         NAME = "hms-test"
         DESCRIPTION = "HMS test"
-        IS_STABLE = getBuildIsStable()
+        IS_STABLE = getBuildIsStable(releaseBranchIsStable: true)
         BUILD_METADATA = getRpmRevision(isStable: env.IS_STABLE)
     }
 
