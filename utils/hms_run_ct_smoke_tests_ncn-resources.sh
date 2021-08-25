@@ -84,8 +84,8 @@ done
 if [[ ${NUM_FAILURES} -gt 0 ]] ; then
     echo "HMS smoke tests ran with ${NUM_FAILURES}/${NUM_TESTS} failures"
     echo
-    echo "Additional information about interpreting these test results can be found at:"
-    echo "https://stash.us.cray.com/projects/CSM/repos/docs-csm/browse/troubleshooting/interpreting_hms_health_check_results.md"
+    echo "Additional information about interpreting these test results can be found on ncn-m001 at:"
+    echo "/usr/share/doc/csm/troubleshooting/interpreting_hms_health_check_results.md"
     echo
     echo "exiting with status code: 1"
     exit 1
