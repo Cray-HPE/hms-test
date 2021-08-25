@@ -47,12 +47,24 @@ fi
 echo "$LINES"
 echo
 
-STATUSES=$(echo "$LINES" | awk '{print $4}' | sort | uniq | tr $'\n' ' ')
-echo "Pod status: $STATUSES"
-
 GOOD_STATUSES="Running Completed"
-for STATUS in $STATUSES; do
-    if ! echo "$GOOD_STATUSES" | grep -q "$STATUS"; then
+
+while read LINE ; do
+    POD_NAME=$(echo "${LINE}" | awk '{print $2}')
+    if [[ -z "${POD_NAME}" ]] ; then
+        echo "Missing pod name" 1>&2
         exit 1
     fi
-done
+    POD_STATUS=$(echo "${LINE}" | awk '{print $4}')
+    if [[ -z "${POD_STATUS}" ]] ; then
+        echo "Missing pod status" 1>&2
+        exit 1
+    fi
+    echo "${POD_NAME} pod status: ${POD_STATUS}"
+    POD_STATUS_CHECK=$(echo "${GOOD_STATUSES}" | grep "${POD_STATUS}")
+    if [[ -z "${POD_STATUS_CHECK}" ]] ; then
+        echo "Unexpected pod status '${POD_STATUS}', expected one of: ${GOOD_STATUSES}"
+        echo "Run 'kubectl -n services describe pod ${POD_NAME}' to continue troubleshooting"
+        exit 1
+    fi
+done <<< "${LINES}"
