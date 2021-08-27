@@ -80,6 +80,7 @@ while read LINE ; do
         else
             echo "${COMPLETIONS} jobs completed, expected: ${TOTAL}"
         fi
+        echo "Run 'kubectl -n services describe job ${JOB_NAME}' to continue troubleshooting"
         exit 1
     fi
 done <<< "${LINES}"
