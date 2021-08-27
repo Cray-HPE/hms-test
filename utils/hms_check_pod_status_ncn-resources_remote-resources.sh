@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # MIT License
-
+#
 # (C) Copyright [2021] Hewlett Packard Enterprise Development LP
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -47,12 +47,24 @@ fi
 echo "$LINES"
 echo
 
-STATUSES=$(echo "$LINES" | awk '{print $4}' | sort | uniq | tr $'\n' ' ')
-echo "Pod status: $STATUSES"
-
 GOOD_STATUSES="Running Completed"
-for STATUS in $STATUSES; do
-    if ! echo "$GOOD_STATUSES" | grep -q "$STATUS"; then
+
+while read LINE ; do
+    POD_NAME=$(echo "${LINE}" | awk '{print $2}')
+    if [[ -z "${POD_NAME}" ]] ; then
+        echo "Missing pod name" 1>&2
         exit 1
     fi
-done
+    POD_STATUS=$(echo "${LINE}" | awk '{print $4}')
+    if [[ -z "${POD_STATUS}" ]] ; then
+        echo "Missing pod status" 1>&2
+        exit 1
+    fi
+    echo "${POD_NAME} pod status: ${POD_STATUS}"
+    POD_STATUS_CHECK=$(echo "${GOOD_STATUSES}" | grep "${POD_STATUS}")
+    if [[ -z "${POD_STATUS_CHECK}" ]] ; then
+        echo "Unexpected pod status '${POD_STATUS}', expected one of: ${GOOD_STATUSES}"
+        echo "Run 'kubectl -n services describe pod ${POD_NAME}' to continue troubleshooting"
+        exit 1
+    fi
+done <<< "${LINES}"
