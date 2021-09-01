@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.6.3] - 2021-09-01
+
+### Changed
+
+- CASMHMS-5128 - Updated cmd/hms-pytest wrapper to pull hms-pytest:1.6.1 instead of hms-pytest:1.1.1.
+
 ## [1.6.2] - 2021-07-28
 
 ### Changed
