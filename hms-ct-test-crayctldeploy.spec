@@ -79,8 +79,13 @@ echo "Current branch is: ${CURRENT_BRANCH}"
 CURRENT_COMMIT=$(git rev-parse --verify HEAD)
 echo "Current commit is: ${CURRENT_COMMIT}"
 
+#TODO
+#BRANCH_HIERARCHY=(
+#    ${CURRENT_BRANCH}
+#    master
+#)
 BRANCH_HIERARCHY=(
-    ${CURRENT_BRANCH}
+    release/csm-1.0
     master
 )
 
