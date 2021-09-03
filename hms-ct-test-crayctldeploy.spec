@@ -79,13 +79,8 @@ echo "Current branch is: ${CURRENT_BRANCH}"
 CURRENT_COMMIT=$(git rev-parse --verify HEAD)
 echo "Current commit is: ${CURRENT_COMMIT}"
 
-#TODO
-#BRANCH_HIERARCHY=(
-#    ${CURRENT_BRANCH}
-#    master
-#)
 BRANCH_HIERARCHY=(
-    release/csm-1.0
+    ${CURRENT_BRANCH}
     master
 )
 
@@ -123,10 +118,10 @@ for REPO in ${REPOS[@]} ; do
     for BRANCH in ${BRANCH_HIERARCHY[@]} ; do
         GIT_CHECKOUT_RET=0
         if [[ "${REPO}" == "hms-firmware-action" ]] && [[ "${BRANCH}" == "release/csm-1.0" ]] ; then
-            echo "Attempting to checkout branch release/csm-1.0-backport..."
+            echo "Attempting to checkout branch 'release/csm-1.0-backport'..."
             git checkout release/csm-1.0-backport || GIT_CHECKOUT_RET=$?
         else
-            echo "Attempting to checkout branch ${BRANCH}..."
+            echo "Attempting to checkout branch '${BRANCH}'..."
             git checkout ${BRANCH} || GIT_CHECKOUT_RET=$?
         fi
         if [[ ${GIT_CHECKOUT_RET} -eq 0 ]] ; then
