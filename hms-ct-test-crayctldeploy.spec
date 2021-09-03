@@ -116,14 +116,19 @@ for REPO in ${REPOS[@]} ; do
     echo "Current directory is: ${CURRENT_DIRECTORY}..."
 
     for BRANCH in ${BRANCH_HIERARCHY[@]} ; do
-        echo "Attempting to checkout branch ${BRANCH}..."
         GIT_CHECKOUT_RET=0
-        git checkout ${BRANCH} || GIT_CHECKOUT_RET=$?
+        if [[ "${REPO}" == "hms-firmware-action" ]] && [[ "${BRANCH}" == "release/csm-1.0" ]] ; then
+            echo "Attempting to checkout branch release/csm-1.0-backport..."
+            git checkout release/csm-1.0-backport || GIT_CHECKOUT_RET=$?
+        else
+            echo "Attempting to checkout branch ${BRANCH}..."
+            git checkout ${BRANCH} || GIT_CHECKOUT_RET=$?
+        fi
         if [[ ${GIT_CHECKOUT_RET} -eq 0 ]] ; then
-            echo "Successfully checked out branch ${BRANCH}..."
+            echo "Successfully checked out branch..."
             break
         else
-            echo "Could not find branch ${BRANCH}..."
+            echo "Could not find branch..."
             if [[ "${BRANCH}" == "master" ]] ; then
                 echo "All out of possible branches... exiting" >&2
                 exit 1
@@ -131,7 +136,11 @@ for REPO in ${REPOS[@]} ; do
         fi
     done
 
-    echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
+    if [[ "${REPO}" == "hms-firmware-action" ]] && [[ "${BRANCH}" == "release/csm-1.0" ]] ; then
+        echo "Searching ${REPO_DIR}/${REPO} on branch 'release/csm-1.0-backport' for CT tests..."
+    else
+        echo "Searching ${REPO_DIR}/${REPO} on branch '${BRANCH}' for CT tests..."
+    fi
     for TEST in ${TEST_BUCKETS[@]} ; do
         find ${REPO_DIR}/${REPO} -name "*${TEST}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \; \
            -exec cp -v {} %{buildroot}%{TEST_DIR}/${TEST}/hms/${REPO}/ \;
@@ -158,6 +167,8 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 %{COMMANDS}/*
 
 %changelog
+* Fri Sep 3 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+- Updated hms-test spec file for new FAS CSM-1.0 target branch.
 * Wed Jul 28 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test repository for migration to GitHub.
 * Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
