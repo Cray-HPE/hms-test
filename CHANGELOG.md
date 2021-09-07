@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.6.4] - 2021-09-07
+
+### Changed
+
+- Updated hms-test spec file with workaround for new FAS release/csm-1.0-backport branch.
+
 ## [1.6.3] - 2021-09-01
 
 ### Changed

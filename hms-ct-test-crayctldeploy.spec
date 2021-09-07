@@ -168,7 +168,7 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 
 %changelog
 * Fri Sep 3 2021 Mitch Schooler <mitchell.schooler@hpe.com>
-- Updated hms-test spec file for new FAS CSM-1.0 target branch.
+- Updated hms-test spec file for new FAS release/csm-1.0-backport branch.
 * Wed Jul 28 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test repository for migration to GitHub.
 * Wed Apr 7 2021 Mitch Schooler <mitchell.schooler@hpe.com>
