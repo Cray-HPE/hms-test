@@ -23,10 +23,15 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 # Main
-WORKDIR=${PWD}
+current_dir=${PWD}
+if [[ "$current_dir" = /opt* ]]; then
+    WORKDIR="$current_dir"
+else
+    WORKDIR=/
+fi
 
 # Pull hms-pytest image from local image registry.
-IMAGE="registry.local/cray/hms-pytest:1.6.1"
+IMAGE="registry.local/cray/hms-pytest:2.0.0"
 
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
@@ -42,4 +47,4 @@ podman run \
     --env PYTHONPATH="${PYTHONPATH}:${HMS_TEST_REPO_DIR}" \
     --workdir ${WORKDIR} \
     ${IMAGE} \
-    pytest $@
+    pytest -o cache_dir=/var/tmp/.pytest_cache $@

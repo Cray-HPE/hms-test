@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.8.5] - 2021-09-29
+
+### Changed
+
+- Changed to work with a non-root docker image.
+
 ## [1.8.4] - 2021-09-01
 
 ### Changed
