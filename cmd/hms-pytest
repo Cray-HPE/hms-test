@@ -24,7 +24,8 @@
 
 # Main
 current_dir=${PWD}
-if [[ "$current_dir" = /opt* ]]; then
+current_dir_permissions=$(stat --format="%A" "$current_dir") # produces output like drwxr-xr-x
+if [[ "$current_dir" = /opt* ]] && [[ "$current_dir_permissions" =~ .......r.. ]]; then
     WORKDIR="$current_dir"
 else
     WORKDIR=/
