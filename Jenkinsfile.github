@@ -12,25 +12,23 @@ pipeline {
 
     environment {
         NAME = "hms-test"
-        DESCRIPTION = "HMS test"
-        IS_STABLE = getBuildIsStable(releaseBranchIsStable: true)
+        DESCRIPTION = "HMS Continuous Test"
+        IS_STABLE = getBuildIsStable()
         BUILD_METADATA = getRpmRevision(isStable: env.IS_STABLE)
     }
 
     stages {
         stage("Build") {
             steps {
-                withCredentials([gitUsernamePassword(credentialsId: 'jenkins-algol60-cray-hpe-github-integration')]) {
-                    sh "make build"
-                }
+                sh "make build"
             }
         }
 
-        stage('Publish ') {
+        stage("Publish") {
             steps {
                 script {
-                    publishCsmRpms(component: env.NAME, pattern: "dist/rpmbuild/RPMS/x86_64/*.rpm", arch: "x86_64", isStable: env.IS_STABLE)
-                    publishCsmRpms(component: env.NAME, pattern: "dist/rpmbuild/SRPMS/*.rpm", arch: "src", isStable: env.IS_STABLE)
+                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-test-rpmbuild/RPMS/x86_64/*.rpm", arch: "x86_64", isStable: env.IS_STABLE)
+                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-test-rpmbuild/SRPMS/*.rpm", arch: "src", isStable: env.IS_STABLE)
                 }
             }
         }
