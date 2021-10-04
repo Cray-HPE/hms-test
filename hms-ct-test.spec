@@ -63,8 +63,8 @@ echo "Current directory is: ${PWD}..."
 
 echo "Searching for CT test files..."
 for BUCKET in ${TEST_BUCKETS[@]} ; do
-    find . -name "*${BUCKET}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${BUCKET}/hms/${REPO}/ \; \
-       -exec cp -v {} %{buildroot}%{TEST_DIR}/${BUCKET}/hms/${REPO}/ \;
+    find . -name "*${BUCKET}*" -exec mkdir -p %{buildroot}%{TEST_DIR}/${BUCKET}/hms/%{REPO}/ \; \
+       -exec cp -v {} %{buildroot}%{TEST_DIR}/${BUCKET}/hms/%{REPO}/ \;
 done
 
 %install
