@@ -1,4 +1,6 @@
-# Copyright 2019-2021 Hewlett Packard Enterprise Development LP
+# MIT License
+#
+# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -17,17 +19,15 @@
 # OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
-#
-# (MIT License)
 
 # RPM
-SPEC_NAME ?= hms-ct-test-crayctldeploy
-RPM_NAME ?= hms-ct-test-crayctldeploy
+SPEC_NAME ?= hms-ct-test
+RPM_NAME ?= hms-ct-test
 RPM_VERSION ?= $(shell cat .version)
 SPEC_FILE ?= ${SPEC_NAME}.spec
 BUILD_METADATA ?= "1~development~$(shell git rev-parse --short HEAD)"
 RPM_SOURCE_NAME ?= ${RPM_NAME}-${RPM_VERSION}
-RPM_BUILD_DIR ?= $(PWD)/dist/rpmbuild
+RPM_BUILD_DIR ?= $(PWD)/dist/hms-test-rpmbuild
 RPM_SOURCE_PATH := ${RPM_BUILD_DIR}/SOURCES/${RPM_SOURCE_NAME}.tar.bz2
 
 build: rpm_prepare rpm_package_source rpm_build_source rpm_build
