@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.8.6] - 2021-10-11
+
+### Changed
+
+- CASMHMS-5055 - Updated hms-test infrastructure for separate CT test RPMs per service.
+
 ## [1.8.5] - 2021-09-29
 
 ### Changed
