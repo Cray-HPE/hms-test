@@ -21,13 +21,13 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 # RPM
-SPEC_NAME ?= hms-ct-test
-RPM_NAME ?= hms-ct-test
+SPEC_NAME ?= hms-ct-test-base
+RPM_NAME ?= hms-ct-test-base
 RPM_VERSION ?= $(shell cat .version)
 SPEC_FILE ?= ${SPEC_NAME}.spec
 BUILD_METADATA ?= "1~development~$(shell git rev-parse --short HEAD)"
 RPM_SOURCE_NAME ?= ${RPM_NAME}-${RPM_VERSION}
-RPM_BUILD_DIR ?= $(PWD)/dist/hms-test-rpmbuild
+RPM_BUILD_DIR ?= $(PWD)/dist/hms-ct-test-base-rpmbuild
 RPM_SOURCE_PATH := ${RPM_BUILD_DIR}/SOURCES/${RPM_SOURCE_NAME}.tar.bz2
 
 build: rpm_prepare rpm_package_source rpm_build_source rpm_build

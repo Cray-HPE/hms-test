@@ -20,9 +20,9 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-Name: hms-ct-test
+Name: hms-ct-test-base
 License: MIT
-Summary: HMS CT test supporting infrastructure
+Summary: HMS CT test base libraries and utilities
 Group: System/Management
 Version: %(cat .version) 
 Release: %(echo ${BUILD_METADATA})
@@ -39,7 +39,7 @@ Vendor: Hewlett Packard Enterprise
 %define COMMANDS /usr/bin
 
 %description
-This package contains shared libraries and utilities used by the HMS CT tests.
+This package contains base libraries and utilities used by the HMS CT tests.
 
 %prep
 %setup -q
@@ -84,7 +84,7 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 %{COMMANDS}/*
 
 %changelog
-* Mon Oct 04 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+* Wed Oct 27 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test infrastructure for separate CT test RPMs per service.
 * Wed Jul 28 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test repository for migration to GitHub.
