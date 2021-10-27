@@ -11,8 +11,8 @@ pipeline {
     }
 
     environment {
-        NAME = "hms-test"
-        DESCRIPTION = "HMS Continuous Test"
+        NAME = "hms-ct-test-base"
+        DESCRIPTION = "HMS Continuous Test Base Libraries and Utilities"
         IS_STABLE = getBuildIsStable()
         BUILD_METADATA = getRpmRevision(isStable: env.IS_STABLE)
     }
@@ -27,8 +27,8 @@ pipeline {
         stage("Publish") {
             steps {
                 script {
-                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-test-rpmbuild/RPMS/x86_64/*.rpm", arch: "x86_64", isStable: env.IS_STABLE)
-                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-test-rpmbuild/SRPMS/*.rpm", arch: "src", isStable: env.IS_STABLE)
+                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-ct-test-base-rpmbuild/RPMS/x86_64/*.rpm", arch: "x86_64", isStable: env.IS_STABLE)
+                    publishCsmRpms(component: env.NAME, pattern: "dist/hms-ct-test-base-rpmbuild/SRPMS/*.rpm", arch: "src", isStable: env.IS_STABLE)
                 }
             }
         }
