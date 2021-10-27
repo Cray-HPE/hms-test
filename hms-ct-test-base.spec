@@ -84,7 +84,7 @@ cp -r cmd/* %{buildroot}%{COMMANDS}/
 %{COMMANDS}/*
 
 %changelog
-* Mon Oct 04 2021 Mitch Schooler <mitchell.schooler@hpe.com>
+* Wed Oct 27 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test infrastructure for separate CT test RPMs per service.
 * Wed Jul 28 2021 Mitch Schooler <mitchell.schooler@hpe.com>
 - Updated hms-test repository for migration to GitHub.
