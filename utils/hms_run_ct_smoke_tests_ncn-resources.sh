@@ -62,11 +62,19 @@ fi
 # create list of all HMS CT smoke test directories
 echo "searching for HMS CT smoke tests..."
 HMS_SMOKE_TEST_DIR="/opt/cray/tests/ncn-smoke/hms"
-HMS_SMOKE_TEST_SUB_DIRS=$(ls ${HMS_SMOKE_TEST_DIR})
-if [[ -z "${HMS_SMOKE_TEST_SUB_DIRS}" ]] ; then
-    >&2 echo "ERROR: no HMS smoke test directories found in: ${HMS_SMOKE_TEST_DIR}"
-    exit 1
-fi
+# run SMD CT smoke tests first
+HMS_SMOKE_TEST_SUB_DIRS="hms-smd
+hms-bss
+hms-capmc
+hms-firmware-action
+hms-hmcollector
+hms-hmi-nfd
+hms-hmi-service
+hms-meds
+hms-redfish-translation-layer
+hms-reds
+hms-scsd
+hms-sls"
 
 # create list of all executables in each of the HMS smoke test directories
 SMOKE_TESTS=""
@@ -184,6 +192,13 @@ ${TEST_ENTRY_OUT}"
         fi
     fi
     rm -f ${TMP_OUTFILE}
+
+    # stop execution if SMD smoke tests fail
+    if [[ ${TEST} =~ "/hms-smd/" ]] ; then
+        if [[ ${TEST_RET} -ne 0 ]] ; then
+            break
+        fi
+    fi
     echo
     echo "##############################################"
     echo
@@ -233,7 +248,11 @@ fi
 
 # check for failures
 if [[ ${NUM_FAILURES} -gt 0 ]] ; then
-    echo "HMS smoke tests ran with ${NUM_FAILURES}/${NUM_TESTS} failures"
+    if [[ ${NUM_FAILURES} -eq 1 ]] ; then
+        echo "HMS smoke tests ran with ${NUM_FAILURES} failure"
+    else
+        echo "HMS smoke tests ran with ${NUM_FAILURES} failures"
+    fi
     echo
     echo "Additional information about interpreting these test results can be found on ncn-m001 at:"
     echo "/usr/share/doc/csm/troubleshooting/interpreting_hms_health_check_results.md"
