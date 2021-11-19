@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.10.0] - 2021-11-18
+
+### Changed
+
+- CASMHMS-5205 - Reorder CT smoke test execution order.
+
 ## [1.9.0] - 2021-10-27
 
 ### Changed
