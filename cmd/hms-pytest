@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -32,7 +32,7 @@ else
 fi
 
 # Pull hms-pytest image from local image registry.
-IMAGE="registry.local/cray/hms-pytest:2.0.0"
+IMAGE="registry.local/artifactory.algol60.net/csm-docker/stable/hms-pytest:2.0.0"
 
 # hms-test CT library path containing shared python functions.
 HMS_TEST_REPO_DIR="/opt/cray/tests/ncn-resources/hms/hms-test"
