@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [1.11.0] - 2022-01-13
+
+### Changed
+
+- CASMHMS-5312 - Updated hms-pytest image location for Nexus.
+
 ## [1.10.0] - 2021-11-18
 
 ### Changed
