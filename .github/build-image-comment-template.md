@@ -24,8 +24,8 @@ Or, use this script to pull the image from the build server to a dev system:
 export REMOTE_IMAGE={{ .image }}
 export LOCAL_IMAGE={{ .imageName }}:{{ .imageTag }}
 
-NEXUS_USERNAME="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.username}} | base64 -d)"
-NEXUS_PASSWORD="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.password}} | base64 -d)"
+NEXUS_USERNAME="$(kubectl -n nexus get secret nexus-admin-credential --template {{"{{"}}.data.username{{"}}"}} | base64 -d)"
+NEXUS_PASSWORD="$(kubectl -n nexus get secret nexus-admin-credential --template {{"{{"}}.data.password{{"}}"}} | base64 -d)"
 
 podman run --rm --network host quay.io/skopeo/stable \
     copy --dest-tls-verify=false docker://${REMOTE_IMAGE} docker://registry.local/csm-docker/{{ .stableString }}/${LOCAL_IMAGE} \
