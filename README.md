@@ -1,3 +1,5 @@
 # HMS Continuous Test (CT) Base Infrastructure Repository
 
-This repository contains base infrastructure (RPM build, shared libraries, utilities, etc) required to deploy and execute the HMS CT tests that live in other HMS repositories along with the services that they verify. The hms-ct-test-base.spec file generates hms-ct-test-base RPMs which are installed on Shasta system NCNs and provide infrastructure expected by the HMS CT tests during runtime. The hms-ct-test-base RPM by itself does not include tests for HMS services.
+This repository contains the docker image `hms-test` that is inherited by the `continious test` images.  The image contains pytest, tavern, python, and a few support scripts and common configurations used by tavern invocations.
+This is a MAJOR redisign (v3); go see v1 code for how the RPMs were created.
+This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT rpms.   

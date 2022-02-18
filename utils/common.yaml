@@ -1,7 +1,0 @@
-name: foo
-description: foo
-variables:
-  verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
-  hsm_base_url: https://cray-smd/hsm/v2
-  fas_base_url: https://cray-fas/v1
-  base_url: #THIS NEEDS A MAJOR REFACTOR!!! use ^^^

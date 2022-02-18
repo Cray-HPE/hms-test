@@ -1,98 +1,95 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
 # Most smoke tests are the same, however, smd_smoke_test_discovery_status_ncn-smoke in hms-smd/test/ct is not
 
 
-# TODO; convert this to python, or not :) but use it for the smoke test idea:
-#
-#
-# #!/bin/bash -l
-#
-# # timestamp_print <message>
-# function timestamp_print()
-# {
-#     echo "($(date +"%H:%M:%S")) $1"
-# }
-#
-# # Print a URL to be used for an API call. The basic usage is:
-# #
-# #   url [http|https] [<port_number>] <target_uri>
-# #
-# # Only the <target_uri> argument is required.
-# # E.g. target uri: apis/smd/hsm/v1/Inventory/ComponentEndpoints
-# function url()
-# {
-# # handle optional leading http[s] argument
-# if [[ $# -gt 1 ]] && [[ "$1" == "http" ]] ; then
-# shift
-# HTTP="http"
-# elif [[ $# -gt 1 ]] && [[ "$1" == "https" ]] ; then
-# shift
-# HTTP="https"
-# else
-# HTTP="https"
-# fi
-#
-# # build up target URL
-# if [[ $# -eq 1 ]] ; then
-# echo "${HTTP}://${TARGET}/$1"
-# elif [[ $# -eq 2 ]] ; then
-# echo "${HTTP}://${TARGET}:$1/$2"
-# else
-# >&2 echo "ERROR: Invalid number of arguments passed to url() function"
-# return 1
-# fi
-# }
-#
-# # run_curl <http_operation> [curl_args]
-# #
-# #   Make a curl call and verify that the status code is 200 or 204. Return 0 if it is, else return
-# #   1 and echo an error message containing the response code and the error line from the curl output.
-# #   The first argument you pass into it has to be the argument to curl’s -X flag (i.e. the type of
-# #   request: GET, POST, etc). Any other arguments are just passed through to the curl command.
-# #
-# #   Global variable dependencies:
-# #
-# #       CURL_ARGS           Leading command line arguments to supply to curl call
-# #       CURL_COUNT          Running total of number of curl calls made during a test run
-# #       OUTPUT_FILES_PATH   Path to writable filesystem location for temporary curl output files
-# #
-# function run_curl()
-# {
-# ((CURL_COUNT++))
-# CURL_OUTFILE="${OUTPUT_FILES_PATH}.curl${CURL_COUNT}.tmp"
-# CURL_CMD="curl -k ${CURL_ARGS} -o ${CURL_OUTFILE} -X $@"
-# _run_curl "${CURL_CMD}"
-# }
-#
-# # _run_curl <curl_cmd>
-# #
-# #   Pass the entire command to run as "$1". It must ultimately generate curl "-i"
-# #   output and store it in the file $CURL_OUTFILE on this host. The output is then
-# #   checked for a 200 or 204 response code. Return 0 if it is, else return 1 and echo an
-# #   error message that contains the status code and the error line from the curl output.
-# #
-# function _run_curl()
-# {
-# CMD="$1"
-# timestamp_print "Testing '${CMD}'..."
-# CMD_OUT=$(eval "${CMD}" 2>&1)
-# RET=$?
-# if [[ -n ${CMD_OUT} ]] ; then
-# echo "${CMD_OUT}"
-# fi
-# if [[ ${RET} -ne 0 ]] ; then
-# >&2 echo -e "ERROR: '${CMD}' failed with error code: ${RET}\n"
-# return 1
-# fi
-# STATUS_CODE_LINE=$(head -1 ${CURL_OUTFILE})
-# STATUS_CHECK=$(echo "${STATUS_CODE_LINE}" | grep -E -w "200|204")
-# if [[ -z "${STATUS_CHECK}" ]] ; then
-# echo "${STATUS_CODE_LINE}"
-# >&2 echo -e "ERROR: '${CMD}' did not return \"200\" or \"204\" status code as expected\n"
-# return 1
-# fi
-# }
-#
+import json
+import argparse
+import requests
+import unittest
+import logging
+
+if __name__ == '__main__':
+    # Set up the command line parser
+    parser = argparse.ArgumentParser(description='Simple HTTP based url requests to validate endpoint health')
+
+    # Define command line arguments
+    parser.add_argument('-f', '--file', action='store', required=True,
+                        help='The path to the input file')
+    # This is a FLAG only.  Many ways to do this: https://www.pythonpool.com/python-argparse-boolean/
+    parser.add_argument('-x', '--exit', action='store_true', default=False,
+                        help='Should the application abort tests on first error')
+
+    # Parse the command line arguments
+    arguments = parser.parse_args()
+    exit_on_error = arguments.exit
+    file_path = arguments.file
+
+    logging.basicConfig(format='%(asctime)s %(message)s',
+                         level=logging.INFO)
+    logging.Formatter(fmt='%(asctime)s.%(msecs)03d', datefmt='%Y-%m-%d,%H:%M:%S')
 
 
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    test_paths = data["test_paths"]
+    suite_name = data["smoke_test_name"]
+
+    test_case = unittest.TestCase()
+
+    verificationErrors = []
+    for test in test_paths:
+        testing_msg = "Testing " + json.dumps(test)
+        logging.info(testing_msg)
+        req = requests.request(url=test["url"], method=str(test["method"]).upper(), data=test["body"],
+                               headers=test["headers"])
+        try:
+            test_case.assertEqual(req.status_code, test["expected_status_code"], "unexpected status code.")
+        except AssertionError as e:
+            verificationErrors.append(str(e))
+            fail_msg = "FAIL: " + str(e)
+            logging.error((fail_msg))
+
+            if exit_on_error:
+                logging.error("aborting the rest of the tests")
+                break
 
 
+    final_string = ""
+    final_line = ""
+    main_error = "MAIN_ERRORS = " + str(len(verificationErrors))
+    logging.info(main_error)
+    if len(verificationErrors) > 0:
+        final_string = "FAIL: " + suite_name
+        final_line = "failed!"
+        logging.error(final_string)
+        logging.error(final_line)
+    else:
+        final_string = "PASS: " + suite_name
+        final_line = "passed!"
+        logging.info(final_string)
+        logging.info(final_line)
+
+
+    # throw a non-zero exit code if there were errors!
+    exit(len(verificationErrors) > 0)
