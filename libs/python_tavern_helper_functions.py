@@ -1,7 +1,7 @@
 """
 MIT License
 
-(C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+(C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -20,13 +20,15 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+HMS CT Framework Test Library
 
-CT Framework HSM Test Library
-
-A library of python functions to support testing of Shasta HSM APIs within the CT Framework.
+A library of python functions to support testing of Shasta HMS APIs within the CT Framework.
 
 Author: Mitch Schooler
 """
+
+def get_bmc_xname_from_first_node_xname(components):
+    return {"xname": components.json()["Components"][0]["ID"].split("n")[0]}
 
 def get_nodemap_first_id(nodemap):
     return {"ID": nodemap.json()["NodeMaps"][0]["ID"]}

@@ -44,7 +44,7 @@ RUN wget -q https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 
-# TODO figure out why the following 4 lines are copying in 12 files, instead of 12 like the RPM.
+# TODO figure out why the following 4 lines are copying in 12 files, instead of 10 like the RPM.
 COPY utils/ /opt/cray/tests/ncn-resources/hms/hms-test/
 COPY utils/ /opt/cray/tests/remote-resources/hms/hms-test/
 
