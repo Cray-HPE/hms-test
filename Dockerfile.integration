@@ -49,3 +49,8 @@ COPY libs/ /src/libs
 
 # Run as nobody
 USER 65534:65534
+
+ENV PATH="/src/libs:${PATH}"
+ENV PATH="/src/utils:${PATH}"
+
+ENTRYPOINT ["smoke.sh example_smoke.json"]
