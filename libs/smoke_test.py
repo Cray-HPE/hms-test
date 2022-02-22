@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # MIT License
 #
 # (C) Copyright [2022] Hewlett Packard Enterprise Development LP
@@ -22,7 +24,6 @@
 
 # Most smoke tests are the same, however, smd_smoke_test_discovery_status_ncn-smoke in hms-smd/test/ct is not
 
-#!/usr/bin/env python3
 
 import json
 import argparse

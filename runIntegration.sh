@@ -1,17 +1,19 @@
+#!/usr/bin/env bash
+#
 # MIT License
-
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
-
+#
+# (C) Copyright [2021-2022] Hewlett Packard Enterprise Development LP
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -19,35 +21,42 @@
 # OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
+#
 
-#FROM artifactory.algol60.net/docker.io/alpine:3.15
-FROM artifactory.algol60.net/docker.io/alpine:3.15
+set -x
 
-LABEL maintainer="Hewlett Packard Enterprise"
-STOPSIGNAL SIGTERM
 
-# Install the necessary packages.
-RUN set -ex \
-    && apk -U upgrade \
-    && apk add --no-cache \
-        python3 \
-        py3-pip \
-        bash
+# Configure docker compose
+export COMPOSE_PROJECT_NAME=$RANDOM
+export COMPOSE_FILE=docker-compose.integration.yaml
 
-RUN pip3 install --upgrade \
-    pip \
-    pytest==6.1.2 \
-    tavern==1.12.2 \
-    pytest-tap
+echo "COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}"
+echo "COMPOSE_FILE: $COMPOSE_FILE"
 
-ARG KUBECTL_VERSION=v1.20.13 
-RUN wget -q https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl
 
-COPY cmd/hms-pytest /usr/bin/hms-pytest
+function cleanup() {
+  docker-compose down
+  if ! [[ $? -eq 0 ]]; then
+    echo "Failed to decompose environment!"
+    exit 1
+  fi
+  exit $1
+}
 
-COPY utils/ /src/utils
-COPY libs/ /src/libs
+# Step 3) Get the base containers running
+echo "Starting containers..."
+docker-compose build
+#docker-compose up  -d cray-power-control #this will stand up everythin except for the integration test container
+docker-compose up --exit-code-from smoke_test
 
-# Run as nobody
-USER 65534:65534
+test_result=$?
+
+# Clean up
+echo "Cleaning up containers..."
+if [[ $test_result -ne 0 ]]; then
+  echo "Integration tests FAILED!"
+  cleanup 1
+fi
+
+echo "Integration tests PASSED!"
+cleanup 0

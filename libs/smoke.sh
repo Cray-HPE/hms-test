@@ -1,1 +1,0 @@
-python3 /src/libs/smoke_test.py -f $@

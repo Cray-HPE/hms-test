@@ -12,7 +12,7 @@ services:
   smoke_test:
     build:
       context: .
-      dockerfile: Dockerfile.integration
+      dockerfile: Dockerfile.integration.Dockerfile
     depends_on:
       - httpbin
     networks:

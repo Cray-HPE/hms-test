@@ -20,7 +20,9 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-FROM artifactory.algol60.net/docker.io/alpine:3.15
+#FROM artifactory.algol60.net/docker.io/alpine:3.15
+FROM alpine:3.15
+
 LABEL maintainer="Hewlett Packard Enterprise"
 STOPSIGNAL SIGTERM
 
@@ -38,19 +40,17 @@ RUN pip3 install --upgrade \
     tavern==1.12.2 \
     pytest-tap
 
-ARG KUBECTL_VERSION=v1.20.13 
-RUN wget -q https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl
-
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 
 COPY utils/ /src/utils
 COPY libs/ /src/libs
 
+RUN chown  -R 65534:65534 /src
 # Run as nobody
 USER 65534:65534
 
 ENV PATH="/src/libs:${PATH}"
 ENV PATH="/src/utils:${PATH}"
 
-ENTRYPOINT ["smoke.sh example_smoke.json"]
+WORKDIR /src/libs
+CMD ["smoke_test.py", "-f","example_smoke.json"]

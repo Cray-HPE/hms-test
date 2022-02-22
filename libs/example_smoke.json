@@ -2,14 +2,14 @@
   "smoke_test_name": "example_smoke_tests",
   "test_paths": [
     {
-      "url": "https://httpbin.org/get?color=blue&size=big",
-      "expected_status_code": 300,
+      "url": "http://httpbin/get?color=blue&size=big",
+      "expected_status_code": 200,
       "method": "GET",
       "body": null,
       "headers": {}
     },
     {
-      "url": "https://httpbin.org/post",
+      "url": "http://httpbin/post",
       "expected_status_code": 200,
       "method": "POST",
       "body": "HI THERE!",
@@ -19,14 +19,14 @@
       }
     },
     {
-      "url": "https://httpbin.org/get?color=blue&size=big",
+      "url": "http://httpbin/get?color=blue&size=big",
       "expected_status_code": 200,
       "method": "GET",
       "body": null,
       "headers": {}
     },
     {
-      "url": "https://httpbin.org/get?badreturncode=true",
+      "url": "http://httpbin/get?badreturncode=true",
       "expected_status_code": 200,
       "method": "GET",
       "body": null,
