@@ -20,7 +20,6 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-#FROM artifactory.algol60.net/docker.io/alpine:3.15
 FROM artifactory.algol60.net/docker.io/alpine:3.15
 
 LABEL maintainer="Hewlett Packard Enterprise"
@@ -40,14 +39,13 @@ RUN pip3 install --upgrade \
     tavern==1.12.2 \
     pytest-tap
 
-ARG KUBECTL_VERSION=v1.20.13 
-RUN wget -q https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl \
-    && chmod +x /usr/local/bin/kubectl
-
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 
 COPY utils/ /src/utils
 COPY libs/ /src/libs
 
 # Run as nobody
+RUN chown  -R 65534:65534 /src
 USER 65534:65534
+
+WORKDIR /src/libs

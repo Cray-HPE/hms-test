@@ -12,7 +12,8 @@ services:
   smoke_test:
     build:
       context: .
-      dockerfile: Dockerfile.integration.Dockerfile
+      dockerfile: Dockerfile
+    command: ["./smoke_test.py", "-f","example_smoke.json"]
     depends_on:
       - httpbin
     networks:
