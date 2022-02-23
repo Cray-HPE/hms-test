@@ -46,7 +46,6 @@ function cleanup() {
 # Step 3) Get the base containers running
 echo "Starting containers..."
 docker-compose build
-#docker-compose up  -d cray-power-control #this will stand up everythin except for the integration test container
 docker-compose up --exit-code-from smoke_test
 
 test_result=$?

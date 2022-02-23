@@ -30,6 +30,7 @@ import argparse
 import requests
 import unittest
 import logging
+from urllib.parse import urljoin
 
 if __name__ == '__main__':
     # Set up the command line parser
@@ -38,6 +39,8 @@ if __name__ == '__main__':
     # Define command line arguments
     parser.add_argument('-f', '--file', action='store', required=True,
                         help='The path to the input file')
+    parser.add_argument('-u', '--url', action='store', required=False,
+                        help='Override the default URL specified in the file')
     # This is a FLAG only.  Many ways to do this: https://www.pythonpool.com/python-argparse-boolean/
     parser.add_argument('-x', '--exit', action='store_true', default=False,
                         help='Should the application abort tests on first error')
@@ -46,6 +49,7 @@ if __name__ == '__main__':
     arguments = parser.parse_args()
     exit_on_error = arguments.exit
     file_path = arguments.file
+    override_url = arguments.url
 
     logging.basicConfig(format='%(asctime)s %(message)s',
                          level=logging.INFO)
@@ -55,15 +59,22 @@ if __name__ == '__main__':
     with open(file_path, 'r') as file:
         data = json.load(file)
     test_paths = data["test_paths"]
+    default_url = data["default_base_url"]
     suite_name = data["smoke_test_name"]
+
+    if override_url:
+        default_url = override_url
 
     test_case = unittest.TestCase()
 
     verificationErrors = []
     for test in test_paths:
+        url = urljoin(default_url, test["path"])
+        test["url"] = url
         testing_msg = "Testing " + json.dumps(test)
         logging.info(testing_msg)
-        req = requests.request(url=test["url"], method=str(test["method"]).upper(), data=test["body"],
+
+        req = requests.request(url=url, method=str(test["method"]).upper(), data=test["body"],
                                headers=test["headers"])
         try:
             test_case.assertEqual(req.status_code, test["expected_status_code"], "unexpected status code.")
