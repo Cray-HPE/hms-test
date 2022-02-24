@@ -4,8 +4,8 @@ name: tavern_global_configuration #is this needed, used?
 description: common configuration for all tavern invocations
 variables:
   verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
-  hsm_base_url: https://cray-smd/hsm/v2 #todo do these need ports? are these paths correct?
-  fas_base_url: https://cray-fas/v1 #todo do these need ports? are these paths correct?
+  hsm_base_url: http://cray-smd:27779 #todo do these need ports? are these paths correct?
+  fas_base_url: http://cray-fas:28800 #todo do these need ports? are these paths correct?
   bss_base_url: todo #todo
   capmc_base_url: todo #todo
   hmcollector_base_url: todo #todo

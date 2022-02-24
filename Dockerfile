@@ -40,12 +40,20 @@ RUN pip3 install --upgrade \
     pytest-tap
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest
-
+COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
+COPY cmd/smoke_test.py /src/app/smoke_test.py
+COPY cmd/functional_test.py /src/app/functional_test.py
 COPY utils/ /src/utils
 COPY libs/ /src/libs
+COPY utils/pytest.ini /src/app/pytest.ini
 
 # Run as nobody
 RUN chown  -R 65534:65534 /src
 USER 65534:65534
 
-WORKDIR /src/libs
+WORKDIR /src/app
+ENTRYPOINT [ "entrypoint.sh" ]
+
+#To test this locally
+# make image
+# docker run -i -t hms-test:3.0.0 smoke -f /src/libs/example_smoke.json -u http://httpbin.org
