@@ -24,45 +24,25 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [Unreleased] - 2022-02-17
+## [3.0.0] - 2022-02-25
+
+### Deprecated
+
+- this no longer builds an RPM; this now builds a docker image that will be used by other test containers
+
+### Added
+
+- this build the hms-pytest legacy image
+- builds in github actions
+- global configuration defaults are provided.
+- includes a runIntegration.sh script which will run the example smoke/functional tests
+
 
 ### Changed
 
-- removed: hms_run_ct_functional_tests_remote-resources.sh
-- removed: hms_run_ct_smoke_tests_remote-resources.sh
-- removed: hms_ct_test_results_processing_lib_ncn-resources_remote-resources.sh
-- renamed: dropped any file name like *_ncn-resources or *_remote-resources.  That part of the name has been truncated.
-- removed: hms_check_job_status_ncn-resources_remote-resources.sh; we are no longer using kubectl in the hms-test image
-- removed: hms_check_pod_status_ncn-resources_remote-resources.sh; we are no longer using kubectl in the hms-test image
-- generated: pytest.ini from running: hms_pytest_ini_file_generator_ncn-resources_remote-resources.py
-- removed: hms_pytest_ini_file_generator_ncn-resources_remote-resources.py because I have a generated pytest.ini, just need to make sure its in the right location!
+- major redesign. This  moves to a plug-n-play model: the functional test and smoke test executions are provided by hms-test.
+- example smoke test and functional tests are provided.
 
-## TODO
-
-- create a run_smoke_test.py script; it takes a json file of { Paths, expected status codes, server configuration (like whats the hostname/port)}
-- create a way for something above the level of the helm test to invoke the set of HMS 'helm tests'.  In the old paradigm, utils/hms_run_ct_cmoke_tests_ncn-resources did this
-- create a way for people to get the log output from the docker container
-- need to replace: https://github.com/Cray-HPE/hpe-csm-scripts/blob/master/scripts/hms_verification/run_hms_ct_tests.sh with something that invokes all the helm tests!!! make is SIMPLE.  This has to invoke the kind of logic that is in: https://github.com/Cray-HPE/hms-test/blob/v1.11.0/utils/hms_run_ct_smoke_tests_ncn-resources.sh
-- figure out what the heck: https://github.com/Cray-HPE/hms-test/blob/v1.11.0/cmd/hms-pytest#L38 is
-- make sure pytest.ini is in the correct relative path!
-- does this stuff need to be run or runable from the PIT node?
-
-## NOTES
-
-the common file is generated,
-the commonfile is specified to PYTEST via:  `PYTEST_CMD="${PYTEST_PATH} --tavern-global-cfg=${COMMON_FILE_PATH} ${FAS_TEST_DIR}"`
-the commonfile looks like: 
-
-```
-name: foo
-description: foo
-variables:
-    verify: false
-    base_url: https://api-gw-service.blah-blah/apis
-    access_token: BIG LONG STRING
-```
-
-THEN the variable: `base_url` or `verify` is used in the test like: `{verify}`
 ## [1.11.0] - 2022-01-13
 
 ### Changed
