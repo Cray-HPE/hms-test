@@ -22,18 +22,9 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Most smoke tests are the same, however, smd_smoke_test_discovery_status_ncn-smoke in hms-smd/test/ct is not
-
-
-import json
 import argparse
-import requests
-import unittest
 import logging
-from urllib.parse import urljoin
 import signal
-import os
-import traceback
 import subprocess
 
 
@@ -54,57 +45,25 @@ if __name__ == '__main__':
                         help='The path to the Tavern global config file')
     parser.add_argument('-p', '--path', action='store', required=True,
                         help='Directory with the tavern tests')
-    # # This is a FLAG only.  Many ways to do this: https://www.pythonpool.com/python-argparse-boolean/
-    # parser.add_argument('-x', '--exit', action='store_true', default=False,
-    #                     help='Should the application abort tests on first error')
-    #
+
     # # Parse the command line arguments
     arguments = parser.parse_args()
-    # exit_on_error = arguments.exit
     config_file = arguments.config
     tavern_test_dir = arguments.path
-    # override_url = arguments.url
-    #
+
     logging.basicConfig(format='%(asctime)s %(message)s',
                         level=logging.DEBUG)
     logging.Formatter(fmt='%(asctime)s.%(msecs)03d', datefmt='%Y-%m-%d,%H:%M:%S')
-    #
-    # with open(file_path, 'r') as file:
-    #     data = json.load(file)
-    # test_paths = data["test_paths"]
-    # configured_url = data["default_base_url"]
-    # suite_name = data["smoke_test_name"]
-    #
-    # logging.debug("suite_name: %s", suite_name)
-    # logging.debug("file_path: %s", file_path)
-    #
-    # logging.info("Running %s...", (suite_name))
-    #
-    # default_url = ""
-    #
-    # if override_url is not None and len(override_url) > 0:
-    #     default_url = override_url
-    # else:
-    #     default_url = configured_url
-    #
-    # logging.debug("default_url: %s", default_url)
-    # logging.debug("override_url: %s", override_url)
-    # logging.debug("configured_url: %s", configured_url)
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGHUP, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    ##TEST CODE######os.kill(os.getpid(), signal.SIGHUP)
+
 
     #######################
     ##  RUN TESTS
     #######################
-
-    #todo tavern will execute any file in the /src/app dir.  They have to be named: test*.yaml
-    # I dont  think they need the word tavern in them. or maybe they do need to be named: test_*.tavern.yaml :shrug:
-
-    #todo does the global config need to be parameterized?
     try:
         pytest_run = subprocess.run(["pytest", "-vvvv", "--tavern-global-cfg=" + config_file, tavern_test_dir], check=True)
     except Exception as e:
@@ -112,5 +71,3 @@ if __name__ == '__main__':
         logging.error("FAIL")
         exit(1)
     logging.info("PASS")
-
-
