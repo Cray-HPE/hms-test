@@ -47,26 +47,27 @@ if __name__ == '__main__':
     ##  CONFIGURE
     #######################
     # Set up the command line parser
-    # parser = argparse.ArgumentParser(description='Simple HTTP based url requests to validate endpoint health')
-    #
-    # # Define command line arguments
-    # parser.add_argument('-f', '--file', action='store', required=True,
-    #                     help='The path to the input file')
-    # parser.add_argument('-u', '--url', action='store', required=False,
-    #                     help='Override the default URL specified in the file')
+    parser = argparse.ArgumentParser(description='Simple HTTP based url requests to validate endpoint health')
+
+    # Define command line arguments
+    parser.add_argument('-c', '--config', action='store', required=True,
+                        help='The path to the Tavern global config file')
+    parser.add_argument('-p', '--path', action='store', required=True,
+                        help='Directory with the tavern tests')
     # # This is a FLAG only.  Many ways to do this: https://www.pythonpool.com/python-argparse-boolean/
     # parser.add_argument('-x', '--exit', action='store_true', default=False,
     #                     help='Should the application abort tests on first error')
     #
     # # Parse the command line arguments
-    # arguments = parser.parse_args()
+    arguments = parser.parse_args()
     # exit_on_error = arguments.exit
-    # file_path = arguments.file
+    config_file = arguments.config
+    tavern_test_dir = arguments.path
     # override_url = arguments.url
     #
-    # logging.basicConfig(format='%(asctime)s %(message)s',
-    #                     level=logging.DEBUG)
-    # logging.Formatter(fmt='%(asctime)s.%(msecs)03d', datefmt='%Y-%m-%d,%H:%M:%S')
+    logging.basicConfig(format='%(asctime)s %(message)s',
+                        level=logging.DEBUG)
+    logging.Formatter(fmt='%(asctime)s.%(msecs)03d', datefmt='%Y-%m-%d,%H:%M:%S')
     #
     # with open(file_path, 'r') as file:
     #     data = json.load(file)
@@ -105,7 +106,7 @@ if __name__ == '__main__':
 
     #todo does the global config need to be parameterized?
     try:
-        pytest_run = subprocess.run(["hms-pytest", "--tavern-global-cfg=/src/utils/tavern_global_config.yaml", "/src/app"], check=True)
+        pytest_run = subprocess.run(["pytest", "-vvvv", "--tavern-global-cfg=" + config_file, tavern_test_dir], check=True)
     except Exception as e:
 
         logging.error("FAIL")

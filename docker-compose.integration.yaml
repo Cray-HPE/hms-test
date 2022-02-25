@@ -8,12 +8,20 @@ networks:
   smoke:
 
 services:
-
+  functional_test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["functional","-c", "/src/libs/tavern_global_config_integration_test.yaml","-p","/src/libs"]
+    depends_on:
+      - httpbin
+    networks:
+      - smoke
   smoke_test:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["./smoke_test.py", "-f","example_smoke.json"]
+    command: ["smoke","-f", "/src/libs/example_smoke.json"]
     depends_on:
       - httpbin
     networks:
