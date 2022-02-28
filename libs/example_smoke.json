@@ -1,0 +1,37 @@
+{
+  "smoke_test_name": "example_smoke_tests",
+  "default_base_url": "http://httpbin/",
+  "test_paths": [
+    {
+      "path": "/get?color=blue&size=big",
+      "expected_status_code": 200,
+      "method": "GET",
+      "body": null,
+      "headers": {}
+    },
+    {
+      "path": "/post",
+      "expected_status_code": 200,
+      "method": "POST",
+      "body": "HI THERE!",
+      "headers": {
+        "accept": "application/json",
+        "custom-header": "just like this"
+      }
+    },
+    {
+      "path": "get?color=blue&size=big///",
+      "expected_status_code": 200,
+      "method": "GET",
+      "body": null,
+      "headers": {}
+    },
+    {
+      "path": "get?badreturncode=true",
+      "expected_status_code": 200,
+      "method": "GET",
+      "body": null,
+      "headers": {}
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+# This file contains the base common configurations for running pytest tavern tests in a production environment.  It is statically generated,
+#  because we anticipate the same settings for all ct-test  containers that inherit from it.
+name: tavern_global_configuration #is this needed, used?
+description: common configuration for all tavern invocations
+variables:
+  verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
+  hsm_base_url: http://cray-smd
+  fas_base_url: http://cray-fas
+  bss_base_url: todo #todo
+  capmc_base_url: todo #todo
+  hmcollector_base_url: todo #todo
+  hmnfd_base_url: todo #todo
+  hbtd_base_url: todo #todo
+  meds_base_url: todo #todo
+  reds_base_url: todo #todo
+  scsd_base_url: todo #todo
+  sls_base_url: todo #todo
+  pcs_base_url: todo #todo

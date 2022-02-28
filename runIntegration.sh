@@ -1,8 +1,8 @@
-#!/bin/bash -e
-
+#!/usr/bin/env bash
+#
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2021-2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,5 +21,49 @@
 # OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
+#
 
-pytest -o cache_dir=/var/tmp/.pytest_cache $@
+set -x
+
+
+# Configure docker compose
+export COMPOSE_PROJECT_NAME=$RANDOM
+export COMPOSE_FILE=docker-compose.integration.yaml
+
+echo "COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}"
+echo "COMPOSE_FILE: $COMPOSE_FILE"
+
+
+function cleanup() {
+  docker-compose down
+  if ! [[ $? -eq 0 ]]; then
+    echo "Failed to decompose environment!"
+    exit 1
+  fi
+  exit $1
+}
+
+echo "Starting containers..."
+docker-compose build
+docker-compose up --exit-code-from smoke_test smoke_test
+test_result=$?
+
+# Clean up
+echo "Cleaning up containers..."
+if [[ $test_result -ne 0 ]]; then
+  echo "Integration tests FAILED!"
+  cleanup 1
+fi
+
+docker-compose up --exit-code-from functional_test functional_test
+test_result=$?
+
+# Clean up
+echo "Cleaning up containers..."
+if [[ $test_result -ne 0 ]]; then
+  echo "Integration tests FAILED!"
+  cleanup 1
+fi
+
+echo "Integration tests PASSED!"
+cleanup 0

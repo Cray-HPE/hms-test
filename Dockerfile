@@ -1,19 +1,17 @@
-#!/bin/bash -e
-
 # MIT License
-#
+
 # (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
-#
+
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-#
+
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-#
+
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -22,4 +20,35 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-pytest -o cache_dir=/var/tmp/.pytest_cache $@
+FROM artifactory.algol60.net/docker.io/alpine:3.15
+
+LABEL maintainer="Hewlett Packard Enterprise"
+STOPSIGNAL SIGTERM
+
+# Install the necessary packages.
+RUN set -ex \
+    && apk -U upgrade \
+    && apk add --no-cache \
+        python3 \
+        py3-pip \
+        bash
+
+RUN pip3 install --upgrade \
+    pip \
+    pytest==6.1.2 \
+    tavern==1.12.2 \
+    pytest-tap
+
+COPY cmd/hms-pytest /usr/bin/hms-pytest
+COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
+COPY cmd/smoke_test.py /src/app/smoke_test.py
+COPY cmd/functional_test.py /src/app/functional_test.py
+COPY libs/ /src/libs
+COPY libs/pytest.ini /src/app/pytest.ini
+
+# Run as nobody
+RUN chown  -R 65534:65534 /src
+USER 65534:65534
+
+WORKDIR /src/app
+ENTRYPOINT [ "entrypoint.sh" ]

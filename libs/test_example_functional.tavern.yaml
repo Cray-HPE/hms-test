@@ -1,8 +1,6 @@
-#!/bin/bash -e
-
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -22,4 +20,18 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-pytest -o cache_dir=/var/tmp/.pytest_cache $@
+
+# Example test metrics test cases: 1
+# 1. GET /get API response code
+---
+test_name: Verify the service status resource
+
+stages:
+  # 1. GET /get API response code
+  - name: Ensure that the FAS service status can be retrieved
+    request:
+      url: "{base_url}/get"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200

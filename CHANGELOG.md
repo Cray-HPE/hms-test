@@ -24,6 +24,25 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [3.0.0] - 2022-02-25
+
+### Deprecated
+
+- this no longer builds an RPM; this now builds a docker image that will be used by other test containers
+
+### Added
+
+- this build the hms-pytest legacy image
+- builds in github actions
+- global configuration defaults are provided.
+- includes a runIntegration.sh script which will run the example smoke/functional tests
+
+
+### Changed
+
+- major redesign. This  moves to a plug-n-play model: the functional test and smoke test executions are provided by hms-test.
+- example smoke test and functional tests are provided.
+
 ## [1.11.0] - 2022-01-13
 
 ### Changed
