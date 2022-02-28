@@ -93,8 +93,6 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    ##TEST CODE######os.kill(os.getpid(), signal.SIGHUP)
-
     #######################
     ##  RUN TESTS
     #######################

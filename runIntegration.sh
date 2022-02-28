@@ -43,7 +43,6 @@ function cleanup() {
   exit $1
 }
 
-# Step 3) Get the base containers running
 echo "Starting containers..."
 docker-compose build
 docker-compose up --exit-code-from smoke_test smoke_test
