@@ -31,7 +31,8 @@ RUN set -ex \
     && apk add --no-cache \
         python3 \
         py3-pip \
-        bash
+        bash \
+        curl
 
 RUN pip3 install --upgrade \
     pip \
