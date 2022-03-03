@@ -6,13 +6,11 @@ variables:
   verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
   hsm_base_url: http://cray-smd
   fas_base_url: http://cray-fas
-  bss_base_url: todo #todo
-  capmc_base_url: todo #todo
+  bss_base_url: http://cray-bss
+  capmc_base_url: http://cray-capmc
   hmcollector_base_url: todo #todo
-  hmnfd_base_url: todo #todo
-  hbtd_base_url: todo #todo
-  meds_base_url: todo #todo
-  reds_base_url: todo #todo
-  scsd_base_url: todo #todo
-  sls_base_url: todo #todo
+  hmnfd_base_url: http://cray-hmnfd
+  hbtd_base_url: http://cray-hbtd
+  scsd_base_url: http://cray-scsd
+  sls_base_url: http://cray-sls
   pcs_base_url: todo #todo
