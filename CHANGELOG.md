@@ -24,11 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [3.1.0] - 2022-03-24
+## [3.1.0] - 2022-03-31
 
 ### Added
 
 - CASMHMS-5446 - Added base URL for cray-power-control service.
+- Rebuilt hms-test image for security updates to fix Alpine vulnerabilities.
 
 ## [3.0.0] - 2022-02-25
 

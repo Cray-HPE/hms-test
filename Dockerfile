@@ -20,7 +20,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-FROM artifactory.algol60.net/docker.io/alpine:3.15
+FROM artifactory.algol60.net/docker.io/alpine:3
 
 LABEL maintainer="Hewlett Packard Enterprise"
 STOPSIGNAL SIGTERM
