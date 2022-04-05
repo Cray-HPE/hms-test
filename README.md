@@ -1,6 +1,6 @@
 # HMS Continuous Test (CT) Base Infrastructure Repository
 
-This is a MAJOR redesign (v3); go see v1 code for how the RPMs were created.
+This is a MAJOR redesign (v3); see v1 code for how RPMs were previously packaged and deployed for testing in CSM-1.2 and earlier releases.
 This repository contains the docker image `hms-test` that is inherited by the `continuous test` images (eg: `cray-fimrware-action-test` in `hms-firmware-action` repo.
 The image contains pytest, tavern, python, and execution scripts for smoke/functional tests.  This image also includes the default configuration files (that can be overridden).
 This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT rpms.   
@@ -64,12 +64,12 @@ Copying blob sha256:f0548e2cebadd91eb72e7ed4be37462f87973ebb11717fd739a28f6be631
 Copying config sha256:4c881529d3e1d1dcf95c20645b2310571873bc0519278bd61c260fa3064ae6e6
 Writing manifest to image destination
 Storing signatures
-Release "cray-hms-test-development" has been upgraded. Happy Helming!
+Release "cray-hms-test-development" does not exist. Installing it now.
 NAME: cray-hms-test-development
 LAST DEPLOYED: Mon Mar 28 20:21:15 2022
 NAMESPACE: services
 STATUS: deployed
-REVISION: 4
+REVISION: 1
 TEST SUITE: None
 NOTES:
 Installation info for chart cray-hms-test-development
@@ -82,7 +82,7 @@ NOTE: it may take a few minutes for this to be ready and to setup the persistent
 1. See if the deployment is operational:
 
 ```
-ncn-m001:~/anieuwsma/hms-test # kubectl -n services get deployment  | grep cray-hms-test-development
+ncn-m001:~/anieuwsma/hms-test # kubectl -n services get deployment  | grep -E "NAME|cray-hms-test-development"
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
 cray-hms-test-development                         1/1     1            1           51m
 ```
@@ -92,7 +92,7 @@ cray-hms-test-development                         1/1     1            1        
 NOTE: you will need the exact pod name from this output
 
 ```
-ncn-m001:~/anieuwsma/hms-test # kubectl -n services get pods | grep cray-hms-test-development
+ncn-m001:~/anieuwsma/hms-test # kubectl -n services get pods | grep -E "NAME|cray-hms-test-development"
 NAME                                                              READY   STATUS                  RESTARTS   AGE
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Running                 0          54m
 ```
@@ -106,7 +106,7 @@ kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 /src/app $
 ```
 
-1. you need to modify the `tavern_global_config_integration_test.yaml` to look like this...
+1. You need to modify the `tavern_global_config_integration_test.yaml` to look like this...
 
 ```
 /src/app $ cat /src/libs/tavern_global_config_integration_test.yaml
@@ -116,12 +116,12 @@ name: tavern_global_configuration #is this needed, used?
 description: common configuration for all tavern invocations
 variables:
   verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
-  base_url: http://httpbin.org/src/app
+  base_url: http://httpbin.org/
 ```
 
-1. To run the functional tests which will invoke tavern via pytest trigger the entrypoint script to run the functional tests.  
+1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
 2. Pass in the tavern config file location using `-c`
-3. point to the directory with the `test*.yaml` tavern tests with `-p`
+3. Point to the directory with the `test*.yaml` tavern tests with `-p`
 
 ```
 /src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
@@ -137,9 +137,9 @@ collected 1 item
 
 ```
 
-1. To run the smoke tests which will invoke a simple http response code checker trigger the entrypoint script to run the smoke tests.
+1. To run the smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument.
 2. Pass in the `example_smoke.json` file with `-f` option
-3. pass in the overloaded URL with `-u`
+3. Pass in the overloaded URL with `-u`
 
 ```
 /src/app $ entrypoint.sh smoke -f /src/libs/example_smoke.json -u http://httpbin.org
@@ -170,7 +170,7 @@ Running smoke tests...
 ```
 
 1. You will most likely use the `/src/libs/tavern_global_config.yaml` file with the functional tests (that invoke pytest + tavern)
-2. you may need to modify or add urls to this path to expose different APIs
+2. You will need to modify or add url paths in `/src/libs/tavern_global_config.yaml` to expose different APIs or include a separate file with updated paths.
 
 ## How to copy files into the pod's PVC
 
@@ -192,8 +192,8 @@ release "cray-hms-test-development" uninstalled
 If you watch quickly, you can see the resources being terminated:
 
 ```
-ncn-m001 # kubectl -n services get pods | grep cray-hms-test-development
+ncn-m001 # kubectl -n services get pods | grep -E "NAME|cray-hms-test-development"
+NAME                                                              READY   STATUS                  RESTARTS   AGE
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Terminating             0          77m
-ncn-m001 # kubectl -n services get pods | grep cray-hms-test-development
-ncn-m001 # 
+
 ```
