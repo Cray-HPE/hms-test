@@ -32,7 +32,8 @@ RUN set -ex \
         python3 \
         py3-pip \
         bash \
-        curl
+        curl \
+        tar
 
 RUN pip3 install --upgrade \
     pip \
