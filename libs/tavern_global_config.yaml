@@ -13,4 +13,4 @@ variables:
   hbtd_base_url: http://cray-hbtd
   scsd_base_url: http://cray-scsd
   sls_base_url: http://cray-sls
-  pcs_base_url: todo #todo
+  pcs_base_url: http://cray-power-control
