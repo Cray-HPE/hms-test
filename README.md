@@ -144,7 +144,7 @@ kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 1. You need to modify the base_url in the `/src/libs/tavern_global_config_integration_test.yaml` configuration file to look like this to run the example Tavern functional test...
 
 ```
-/src/app $ cat /src/libs/tavern_global_config_integration_test.yaml
+/src/app $ vi /src/libs/tavern_global_config_integration_test.yaml
 # This file contains the base common configurations for running pytest tavern tests.  It is statically generated,
 #  because we anticipate the same settings for all ct-test  containers that inherit from it.
 name: tavern_global_configuration #is this needed, used?
