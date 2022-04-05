@@ -97,11 +97,14 @@ NAME                                                              READY   STATUS
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Running                 0          54m
 ```
 
-1. To run the smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument.
+1. To run the smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument from within the pod.
 2. Pass in the `example_smoke.json` file with `-f` option
 3. Pass in the overloaded URL with `-u`
 
 ```
+kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+/src/app $
+
 /src/app $ entrypoint.sh smoke -f /src/libs/example_smoke.json -u http://httpbin.org
 Running smoke tests...
 2022-03-28 20:04:27,901 suite_name: example_smoke_tests
@@ -138,7 +141,7 @@ kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 /src/app $
 ```
 
-1. You need to modify the `tavern_global_config_integration_test.yaml` configuration file to look like this to run the example Tavern functional test...
+1. You need to modify the base_url in the `/src/libs/tavern_global_config_integration_test.yaml` configuration file to look like this to run the example Tavern functional test...
 
 ```
 /src/app $ cat /src/libs/tavern_global_config_integration_test.yaml
@@ -156,6 +159,9 @@ variables:
 3. Point to the directory with the `test*.yaml` tavern tests with `-p`
 
 ```
+/src/app $ cp /src/libs/test_example_functional.tavern.yaml /src/app/
+/src/app $
+
 /src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
 Running functional tests...
 ================================================================= test session starts ==================================================================
