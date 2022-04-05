@@ -24,14 +24,7 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [3.1.0] - 2022-03-31
-
-### Added
-
-- CASMHMS-5446 - Added base URL for cray-power-control service.
-- Rebuilt hms-test image for security updates to fix Alpine vulnerabilities.
-
-## [3.0.0] - 2022-02-25
+## [3.0.0] - 2022-04-05
 
 ### Deprecated
 
@@ -43,6 +36,8 @@ Security - in case of vulnerabilities
 - builds in github actions
 - global configuration defaults are provided.
 - includes a runIntegration.sh script which will run the example smoke/functional tests
+- added base URL for cray-power-control service.
+- rebuilt hms-test image for security updates to fix Alpine vulnerabilities.
 
 ### Changed
 
