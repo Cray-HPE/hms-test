@@ -1,14 +1,14 @@
 # HMS Continuous Test (CT) Base Infrastructure Repository
 
 This is a MAJOR redesign (v3); see v1 code for how RPMs were previously packaged and deployed for testing in CSM-1.2 and earlier releases.
-This repository contains the docker image `hms-test` that is inherited by the `continuous test` images (eg: `cray-firmware-action-test` in `hms-firmware-action` repo.
+This repository contains the docker image `hms-test` that is inherited by the `continuous test` images (eg: `cray-firmware-action-test` in `hms-firmware-action` repo).
 The image contains pytest, tavern, python, and execution scripts for smoke/functional tests.  This image also includes the default configuration files (that can be overridden).
-This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT rpms.   
+This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT RPMs.
 
 
-# How to Test/Develop in a kubernetes environment
+# How to Test/Develop in a Kubernetes environment
 
-This will describe some development tools that have been created to aid in rapid prototyping in a kubernetes environment.
+This will describe some development tools that have been created to aid in rapid prototyping in a Kubernetes environment.
 
 ## How to install the development environment
 
@@ -97,46 +97,6 @@ NAME                                                              READY   STATUS
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Running                 0          54m
 ```
 
-## How to use the tools
-
-1. Exec into the pod and now you can use the tools
-
-```
-kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
-/src/app $
-```
-
-1. You need to modify the `tavern_global_config_integration_test.yaml` to look like this...
-
-```
-/src/app $ cat /src/libs/tavern_global_config_integration_test.yaml
-# This file contains the base common configurations for running pytest tavern tests.  It is statically generated,
-#  because we anticipate the same settings for all ct-test  containers that inherit from it.
-name: tavern_global_configuration #is this needed, used?
-description: common configuration for all tavern invocations
-variables:
-  verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
-  base_url: http://httpbin.org/
-```
-
-1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
-2. Pass in the tavern config file location using `-c`
-3. Point to the directory with the `test*.yaml` tavern tests with `-p`
-
-```
-/src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
-Running functional tests...
-================================================================= test session starts ==================================================================
-platform linux -- Python 3.9.7, pytest-6.1.2, py-1.11.0, pluggy-0.13.1 -- /usr/bin/python3
-cachedir: .pytest_cache
-rootdir: /src/libs, configfile: pytest.ini
-plugins: tap-3.3, tavern-1.12.2
-collected 1 item
-
-../libs/test_example_functional.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
-
-```
-
 1. To run the smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument.
 2. Pass in the `example_smoke.json` file with `-f` option
 3. Pass in the overloaded URL with `-u`
@@ -169,8 +129,96 @@ Running smoke tests...
 /src/app $
 ```
 
-1. You will most likely use the `/src/libs/tavern_global_config.yaml` file with the functional tests (that invoke pytest + tavern)
+## How to use the tools
+
+1. Exec into the pod and now you can use the tools
+
+```
+kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+/src/app $
+```
+
+1. You need to modify the `tavern_global_config_integration_test.yaml` configuration file to look like this to run the example Tavern functional test...
+
+```
+/src/app $ cat /src/libs/tavern_global_config_integration_test.yaml
+# This file contains the base common configurations for running pytest tavern tests.  It is statically generated,
+#  because we anticipate the same settings for all ct-test  containers that inherit from it.
+name: tavern_global_configuration #is this needed, used?
+description: common configuration for all tavern invocations
+variables:
+  verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
+  base_url: http://httpbin.org/
+```
+
+1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
+2. Pass in the tavern config file location using `-c`
+3. Point to the directory with the `test*.yaml` tavern tests with `-p`
+
+```
+/src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
+Running functional tests...
+================================================================= test session starts ==================================================================
+platform linux -- Python 3.9.7, pytest-6.1.2, py-1.11.0, pluggy-0.13.1 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /src/libs, configfile: pytest.ini
+plugins: tap-3.3, tavern-1.12.2
+collected 1 item
+
+../libs/test_example_functional.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
+```
+
+1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests (that invoke pytest + tavern)
 2. You will need to modify or add url paths in `/src/libs/tavern_global_config.yaml` to expose different APIs or include a separate file with updated paths.
+3. The following example shows a simple HMS functional test for FAS (Firmware Action Service).
+
+```
+/src/app $ cat /src/app/test_service_status.tavern.yaml
+# Tavern test cases for the FAS service status API
+# Author: Mitch Schooler
+# Service: Firmware Action Service
+
+# HMS test metrics test cases: 2
+# 1. GET /service/status API response code
+# 2. GET /service/status API response body
+---
+test_name: Verify the service status resource
+
+stages:
+  # 1. GET /service/status API response code
+  # 2. GET /service/status API response body
+  - name: Ensure that the FAS service status can be retrieved
+    request:
+      url: "{fas_base_url}/service/status"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              serviceStatus:
+                type: str
+                required: True
+                enum:
+                  - "running"
+
+/src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config.yaml -p /src/app
+Running functional tests...
+==================================================================================================== test session starts ====================================================================================================
+platform linux -- Python 3.9.7, pytest-6.1.2, py-1.11.0, pluggy-0.13.1 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /src/app, configfile: pytest.ini
+plugins: tap-3.3, tavern-1.12.2
+collected 1 item
+
+test_service_status.tavern.yaml::Verify the service status resource PASSED                                                                                                                                            [100%]
+```
+
 
 ## How to copy files into the pod's PVC
 
