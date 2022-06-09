@@ -2,7 +2,7 @@
 
 This is a MAJOR redesign (v3); see v1 code for how RPMs were previously packaged and deployed for testing in CSM-1.2 and earlier releases.
 This repository contains the docker image `hms-test` that is inherited by the `continuous test` images (eg: `cray-firmware-action-test` in `hms-firmware-action` repo).
-The image contains pytest, tavern, python, and execution scripts for smoke/functional tests.  This image also includes the default configuration files (that can be overridden).
+The image contains pytest, tavern, python, and execution scripts for smoke/functional tests. This image also includes the default configuration files (that can be overridden).
 This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT RPMs.
 
 
@@ -83,7 +83,7 @@ NOTE: it may take a few minutes for this to be ready and to setup the persistent
 1. See if the deployment is operational:
 
 ```
-ncn-m001:~/anieuwsma/hms-test # kubectl -n services get deployment  | grep -E "NAME|cray-hms-test-development"
+ncn-m001 # kubectl -n services get deployment | grep -E "NAME|cray-hms-test-development"
 NAME                                              READY   UP-TO-DATE   AVAILABLE   AGE
 cray-hms-test-development                         1/1     1            1           51m
 ```
@@ -93,17 +93,17 @@ cray-hms-test-development                         1/1     1            1        
 NOTE: you will need the exact pod name from this output
 
 ```
-ncn-m001:~/anieuwsma/hms-test # kubectl -n services get pods | grep -E "NAME|cray-hms-test-development"
+ncn-m001 # kubectl -n services get pods | grep -E "NAME|cray-hms-test-development"
 NAME                                                              READY   STATUS                  RESTARTS   AGE
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Running                 0          54m
 ```
 
 1. To run the example smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument from within the pod.
-2. Pass in the `example_smoke.json` file with `-f` option
-3. Pass in the overloaded URL with `-u`
+2. Pass in the `example_smoke.json` file with `-f` option.
+3. Pass in the overloaded URL with `-u`.
 
 ```
-kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 /src/app $
 
 /src/app $ entrypoint.sh smoke -f /src/libs/example_smoke.json -u http://httpbin.org
@@ -134,19 +134,20 @@ Running smoke tests...
 
 ## How to use the tools
 
-1. Exec into the pod and now you can use the tools
+1. Exec into the `cray-hms-test-development` pod (if you haven't already) and now you can use the tools.
 
 ```
-kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 /src/app $
 ```
 
 1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
-2. Pass in the tavern config file location using `-c`
-3. Point to the directory with the `test*.yaml` tavern tests with `-p`
+2. Pass in the tavern config file location using `-c`.
+3. Point to the directory with the `test*.yaml` tavern tests with `-p`.
 
 ```
 /src/app $ cp /src/libs/test_example_functional.tavern.yaml /src/app/
+
 /src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
 Running functional tests...
 ================================================================= test session starts ==================================================================
@@ -161,7 +162,7 @@ collected 1 item
 /src/app $ rm /src/app/test_example_functional.tavern.yaml
 ```
 
-1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests (that invoke pytest + tavern)
+1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests that make calls to HMS services.
 2. You will need to modify or add url paths in `/src/libs/tavern_global_config.yaml` to expose different APIs or include a separate file with updated paths.
 3. The following example shows a simple HMS functional test for FAS (Firmware Action Service).
 
@@ -219,12 +220,12 @@ test_service_status.tavern.yaml::Verify the service status resource PASSED      
 ## How to copy files into the pod's PVC
 
 ```
-kubectl -n services cp {your file or directory} cray-hms-test-development-6677f586dc-vp46b:/src/data
+ncn-m001 # kubectl -n services cp {your file or directory} cray-hms-test-development-6677f586dc-vp46b:/src/data
 ```
 
 NOTE: `/src/data` is where the 1gb PVC is mounted.
 
-I recommend you do most development off cluster, then copy in files for rapid testing.  However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
+I recommend you do most development off cluster, then copy in files for rapid testing. However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
 
 ## How to clean up and delete the PVC when you are COMPLETELY finished
 
@@ -239,5 +240,4 @@ If you watch quickly, you can see the resources being terminated:
 ncn-m001 # kubectl -n services get pods | grep -E "NAME|cray-hms-test-development"
 NAME                                                              READY   STATUS                  RESTARTS   AGE
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Terminating             0          77m
-
 ```
