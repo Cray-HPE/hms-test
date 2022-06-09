@@ -97,7 +97,7 @@ NAME                                                              READY   STATUS
 cray-hms-test-development-6677f586dc-vp46b                        2/2     Running                 0          54m
 ```
 
-1. To run the smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument from within the pod.
+1. To run the example smoke tests which will invoke a simple http response code checker, trigger the `entrypoint` script with the `smoke` argument from within the pod.
 2. Pass in the `example_smoke.json` file with `-f` option
 3. Pass in the overloaded URL with `-u`
 
@@ -141,19 +141,6 @@ kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 /src/app $
 ```
 
-1. You need to modify the base_url in the `/src/libs/tavern_global_config_integration_test.yaml` configuration file to look like this to run the example Tavern functional test...
-
-```
-/src/app $ vi /src/libs/tavern_global_config_integration_test.yaml
-# This file contains the base common configurations for running pytest tavern tests.  It is statically generated,
-#  because we anticipate the same settings for all ct-test  containers that inherit from it.
-name: tavern_global_configuration #is this needed, used?
-description: common configuration for all tavern invocations
-variables:
-  verify: false #should ssl verification happen in tavern tests? its hard coded everywhere to false (partially because the PIT would complain)
-  base_url: http://httpbin.org/
-```
-
 1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
 2. Pass in the tavern config file location using `-c`
 3. Point to the directory with the `test*.yaml` tavern tests with `-p`
@@ -179,6 +166,9 @@ collected 1 item
 3. The following example shows a simple HMS functional test for FAS (Firmware Action Service).
 
 ```
+/src/app $ cat /src/libs/tavern_global_config.yaml | grep fas_base_url
+  fas_base_url: http://cray-fas
+
 /src/app $ cat /src/app/test_service_status.tavern.yaml
 # Tavern test cases for the FAS service status API
 # Author: Mitch Schooler
