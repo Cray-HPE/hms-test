@@ -16,10 +16,11 @@ This will describe some development tools that have been created to aid in rapid
 
 ```setup_cray-hms-test-development.sh
 #!/usr/bin/env bash
-#download the chart from artifactory. The raw source is: https://github.com/Cray-HPE/hms-test-charts/tree/main/charts/v1.0/cray-hms-test-development
+
+# Download the chart from artifactory. The raw source is: https://github.com/Cray-HPE/hms-test-charts/tree/main/charts/v1.0/cray-hms-test-development
 wget https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.0.tgz
 
-#upload the hms-test image to the system
+# Upload the hms-test image to the system
 export REMOTE_IMAGE=artifactory.algol60.net/csm-docker/stable/hms-test:3.0.0
 export LOCAL_IMAGE=hms-test:3.0.0
 
@@ -31,7 +32,7 @@ podman run --rm --network host quay.io/skopeo/stable \
     --dest-username "$NEXUS_USERNAME" \
     --dest-password "$NEXUS_PASSWORD"
 
-#use helm to upgrade/install the chart
+# Use helm to upgrade/install the chart
 helm upgrade --install -n services cray-hms-test-development ./cray-hms-test-development-1.0.0.tgz
 ```
 
@@ -129,7 +130,6 @@ Running smoke tests...
 2022-03-28 20:04:28,377 PASS: example_smoke_tests
 2022-03-28 20:04:28,377 passed!
 2022-03-28 20:04:28,377 PASS: example_smoke_tests passed!
-/src/app $
 ```
 
 ## How to use the tools
@@ -147,8 +147,6 @@ kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
 
 ```
 /src/app $ cp /src/libs/test_example_functional.tavern.yaml /src/app/
-/src/app $
-
 /src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
 Running functional tests...
 ================================================================= test session starts ==================================================================
@@ -161,7 +159,6 @@ collected 1 item
 ../libs/test_example_functional.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
 
 /src/app $ rm /src/app/test_example_functional.tavern.yaml
-/src/app $
 ```
 
 1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests (that invoke pytest + tavern)

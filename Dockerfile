@@ -30,15 +30,19 @@ RUN set -ex \
     && apk -U upgrade \
     && apk add --no-cache \
         python3 \
+        python3-dev \
         py3-pip \
         bash \
         curl \
-        tar
+        tar \
+        gcc \
+        musl-dev
 
+#TODO: need to verify HMS Tavern tests w/ these latest versions of pytest and tavern
 RUN pip3 install --upgrade \
     pip \
-    pytest==6.1.2 \
-    tavern==1.12.2 \
+    pytest==7.1.2 \
+    tavern==1.23.1 \
     pytest-tap
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest

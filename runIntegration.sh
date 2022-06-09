@@ -34,12 +34,13 @@ echo "COMPOSE_FILE: $COMPOSE_FILE"
 
 function cleanup() {
   docker-compose down
-  if ! [[ $? -eq 0 ]]; then
+  if [[ $? -ne 0 ]]; then
     echo "Failed to decompose environment!"
     exit 1
   fi
   exit $1
 }
+
 
 echo "Starting containers..."
 docker-compose build
@@ -49,7 +50,7 @@ test_result=$?
 # Clean up
 echo "Cleaning up containers..."
 if [[ $test_result -ne 0 ]]; then
-  echo "Integration tests FAILED!"
+  echo "Integration smoke tests FAILED!"
   cleanup 1
 fi
 
@@ -59,7 +60,7 @@ test_result=$?
 # Clean up
 echo "Cleaning up containers..."
 if [[ $test_result -ne 0 ]]; then
-  echo "Integration tests FAILED!"
+  echo "Integration functional tests FAILED!"
   cleanup 1
 fi
 
