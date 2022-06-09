@@ -159,6 +159,9 @@ plugins: tap-3.3, tavern-1.12.2
 collected 1 item
 
 ../libs/test_example_functional.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
+
+/src/app $ rm /src/app/test_example_functional.tavern.yaml
+/src/app $
 ```
 
 1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests (that invoke pytest + tavern)
