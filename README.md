@@ -162,7 +162,7 @@ collected 1 item
 /src/app $ rm /src/app/test_example_functional.tavern.yaml
 ```
 
-1. You should use the `/src/libs/tavern_global_config.yaml` file for HMS functional tests that make calls to HMS services.
+1. You should use the `/src/libs/tavern_global_config.yaml` file for functional tests that make calls to HMS services.
 2. You will need to modify or add url paths in `/src/libs/tavern_global_config.yaml` to expose different APIs or include a separate file with updated paths.
 3. The following example shows a simple HMS functional test for FAS (Firmware Action Service).
 
