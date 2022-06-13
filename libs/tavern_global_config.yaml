@@ -4,13 +4,12 @@ name: tavern_global_configuration
 description: common configuration for all tavern invocations
 variables:
   verify: false
-  hsm_base_url: http://cray-smd
-  fas_base_url: http://cray-fas
   bss_base_url: http://cray-bss
   capmc_base_url: http://cray-capmc
-  hmcollector_base_url: TODO #TODO
-  hmnfd_base_url: http://cray-hmnfd
+  fas_base_url: http://cray-fas
   hbtd_base_url: http://cray-hbtd
+  hmnfd_base_url: http://cray-hmnfd
+  pcs_base_url: http://cray-power-control
   scsd_base_url: http://cray-scsd
   sls_base_url: http://cray-sls
-  pcs_base_url: http://cray-power-control
+  smd_base_url: http://cray-smd
