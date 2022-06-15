@@ -32,7 +32,7 @@ Security - in case of vulnerabilities
 - update to pytest:7.1.2 and tavern:1.23.1 to work around python:3.10 regression issue43798
 - add packages required to build latest test image
 - clean up documentation for developing tavern tests in a live kubernetes environment
-- fix smd base url
+- pull alpine base image from algol60 csm-docker/stable
 
 ## [3.0.0] - 2022-04-05
 

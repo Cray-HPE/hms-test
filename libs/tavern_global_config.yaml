@@ -9,7 +9,8 @@ variables:
   fas_base_url: http://cray-fas
   hbtd_base_url: http://cray-hbtd
   hmnfd_base_url: http://cray-hmnfd
+  hsm_base_url: http://cray-smd
   pcs_base_url: http://cray-power-control
+  reds_base_url: http://cray-reds
   scsd_base_url: http://cray-scsd
   sls_base_url: http://cray-sls
-  smd_base_url: http://cray-smd
