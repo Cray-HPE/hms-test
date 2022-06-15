@@ -24,6 +24,16 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [3.1.0] - 2022-06-15
+
+### Changed
+
+- run integration test workflow on pushes
+- update to pytest:7.1.2 and tavern:1.23.1 to work around python:3.10 regression issue43798
+- add packages required to build latest test image
+- clean up documentation for developing tavern tests in a live kubernetes environment
+- fix smd base url
+
 ## [3.0.0] - 2022-04-05
 
 ### Deprecated

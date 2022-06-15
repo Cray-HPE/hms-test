@@ -38,7 +38,6 @@ RUN set -ex \
         gcc \
         musl-dev
 
-#TODO: need to verify HMS Tavern tests w/ these latest versions of pytest and tavern
 RUN pip3 install --upgrade \
     pip \
     pytest==7.1.2 \

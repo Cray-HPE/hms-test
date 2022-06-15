@@ -23,11 +23,11 @@
 # Example test metrics test cases: 1
 # 1. GET /get API response code
 ---
-test_name: Verify the service status resource
+test_name: Verify the /get resource
 
 stages:
   # 1. GET /get API response code
-  - name: Ensure that the FAS service status can be retrieved
+  - name: Ensure that the /get resource can be retrieved
     request:
       url: "{base_url}/get"
       method: GET
