@@ -1,7 +1,7 @@
 version: '3.7'
 
 networks:
-  smoke:
+  hms-test:
 
 services:
   functional_test:
@@ -12,7 +12,7 @@ services:
     depends_on:
       - httpbin
     networks:
-      - smoke
+      - hms-test
   smoke_test:
     build:
       context: .
@@ -21,10 +21,10 @@ services:
     depends_on:
       - httpbin
     networks:
-      - smoke
+      - hms-test
   httpbin:
     image:  artifactory.algol60.net/docker.io/kennethreitz/httpbin
     hostname: httpbin
     networks:
-      - smoke
+      - hms-test
 
