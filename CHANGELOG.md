@@ -24,6 +24,13 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [3.2.0] - 2022-07-15
+
+### Changed
+
+- kill the istio sidecar after the tests run to save wait time
+- remove build dependencies from final test image
+
 ## [3.1.0] - 2022-06-15
 
 ### Changed

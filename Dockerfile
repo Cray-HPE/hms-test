@@ -25,7 +25,7 @@ FROM artifactory.algol60.net/csm-docker/stable/docker.io/library/alpine:3.16
 LABEL maintainer="Hewlett Packard Enterprise"
 STOPSIGNAL SIGTERM
 
-# Install the necessary packages.
+# Install the necessary packages
 RUN set -ex \
     && apk -U upgrade \
     && apk add --no-cache \
@@ -36,13 +36,26 @@ RUN set -ex \
         curl \
         tar \
         gcc \
+        musl-dev \
+    && pip3 install --upgrade \
+        pip \
+        pytest==7.1.2 \
+        tavern==1.23.1 \
+    && apk del \
+        python3-dev \
+        tar \
+        gcc \
         musl-dev
 
-RUN pip3 install --upgrade \
-    pip \
-    pytest==7.1.2 \
-    tavern==1.23.1 \
-    pytest-tap
+#TODO
+#pytest-tap
+
+#TODO
+#RUN pip3 install --upgrade \
+#    pip \
+#    pytest==7.1.2 \
+#    tavern==1.23.1 \
+#    pytest-tap
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
