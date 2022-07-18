@@ -47,16 +47,6 @@ RUN set -ex \
         gcc \
         musl-dev
 
-#TODO
-#pytest-tap
-
-#TODO
-#RUN pip3 install --upgrade \
-#    pip \
-#    pytest==7.1.2 \
-#    tavern==1.23.1 \
-#    pytest-tap
-
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
 COPY cmd/smoke_test.py /src/app/smoke_test.py
