@@ -30,6 +30,7 @@ Security - in case of vulnerabilities
 
 - kill the istio sidecar after the tests run to save wait time
 - remove build dependencies from final test image
+- revert back to alpine:3.15 base image to resolve CVEs
 
 ## [3.1.0] - 2022-06-15
 
