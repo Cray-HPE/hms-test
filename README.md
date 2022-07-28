@@ -18,11 +18,11 @@ This will describe some development tools that have been created to aid in rapid
 #!/usr/bin/env bash
 
 # Download the chart from artifactory. The raw source is: https://github.com/Cray-HPE/hms-test-charts/tree/main/charts/v1.0/cray-hms-test-development
-wget https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.0.tgz
+wget https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.1.tgz
 
 # Upload the hms-test image to the system
-export REMOTE_IMAGE=artifactory.algol60.net/csm-docker/stable/hms-test:3.0.0
-export LOCAL_IMAGE=hms-test:3.0.0
+export REMOTE_IMAGE=artifactory.algol60.net/csm-docker/stable/hms-test:3.2.0
+export LOCAL_IMAGE=hms-test:3.2.0
 
 NEXUS_USERNAME="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.username}} | base64 -d)"
 NEXUS_PASSWORD="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.password}} | base64 -d)"
@@ -32,48 +32,61 @@ podman run --rm --network host quay.io/skopeo/stable \
     --dest-username "$NEXUS_USERNAME" \
     --dest-password "$NEXUS_PASSWORD"
 
+echo
+
 # Use helm to upgrade/install the chart
-helm upgrade --install -n services cray-hms-test-development ./cray-hms-test-development-1.0.0.tgz
+helm upgrade --install -n services cray-hms-test-development ./cray-hms-test-development-1.0.1.tgz
 ```
 
 Output should look something like:
 
 ```
---2022-03-28 20:21:11--  https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.0.tgz
+--2022-07-28 02:15:41--  https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.1.tgz
 Resolving artifactory.algol60.net (artifactory.algol60.net)... 34.120.105.219
 Connecting to artifactory.algol60.net (artifactory.algol60.net)|34.120.105.219|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 17671 (17K) [application/x-gzip]
-Saving to: ‘cray-hms-test-development-1.0.0.tgz.1’
+Saving to: ‘cray-hms-test-development-1.0.1.tgz’
 
-cray-hms-test-development-1.0.0.tgz.1 100%[=========================================================================>]  17.26K  --.-KB/s    in 0.01s
+cray-hms-test-development-1.0.1.tgz                       100%[====================================================================================================================================>]  17.26K  --.-KB/s    in 0.01s
 
-2022-03-28 20:21:11 (1.33 MB/s) - ‘cray-hms-test-development-1.0.0.tgz.1’ saved [17671/17671]
+2022-07-28 02:15:41 (1.38 MB/s) - ‘cray-hms-test-development-1.0.1.tgz’ saved [17671/17671]
 
+Trying to pull quay.io/skopeo/stable:latest...
 Getting image source signatures
-Copying blob sha256:3aa4d0bbde192bfaba75f2d124d8cf2e6de452ae03e55d54105e46b06eb8127e
-Copying blob sha256:defb6b2bb024703a6d221086b7718a0ed2801058ca1ee9ca4305e3c2d590c647
-Copying blob sha256:530d8982cc424f38053f7942ba83843739aeeccc8c70a99fb156a964719292f3
-Copying blob sha256:235ceb423e67f551977e1abac28d2eaae26e50a020e0972a28ca4b8d897178be
-Copying blob sha256:1b01ea1be8aca3fd95873b99083e97482c88374c6d648eef8031dc339c88ce2a
-Copying blob sha256:38f8e7472ea57428cc374eba8974cd1e340f69cb9fbba58bc036b8f9e6d52ab3
-Copying blob sha256:00f71969241bae02a4c5a8382fb32a6634e142e6cc780f6a9a21dbdceb77ce7f
-Copying blob sha256:b31b23df732d346b415e55c50f13261f5767ff01ad54abdf5dadc5a2cff46e01
-Copying blob sha256:2ac4b606308fae3b514bfadcb7b1a9b5666e8fa13849d568e1a85d2907ff7137
-Copying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
-Copying blob sha256:f0548e2cebadd91eb72e7ed4be37462f87973ebb11717fd739a28f6be63161c5
-Copying config sha256:4c881529d3e1d1dcf95c20645b2310571873bc0519278bd61c260fa3064ae6e6
+Copying blob 6590ad574cd4 done
+Copying blob 3229a27b3890 done
+Copying blob 528b87fb2c4e done
+Copying blob 75f075168a24 done
+Copying blob 3970ce8fd634 done
+Copying config 2aa4e04998 done
 Writing manifest to image destination
 Storing signatures
+Getting image source signatures
+Copying blob sha256:abf4d74dda5185d214fcb6f021d469b5a77f658f15c750193ccae900b5e689be
+Copying blob sha256:4551d438ec844bd88efcf09c6a0b3fc7e6a17eed7f9526b1d2e3a7bf432311bd
+Copying blob sha256:92acb010721b2fd77128075e459deba71e65e20df36b75759276d110c19ebe67
+Copying blob sha256:685a9b1372dd607371deca578c93945cb4bafa785f5f47be30d61c8176898811
+Copying blob sha256:df9b9388f04ad6279a7410b85cedfdcb2208c0a003da7ab5613af71079148139
+Copying blob sha256:6b5574c5400a49c9e8346c080519eedab4217d6b8e304699e494bf2a8ddb1918
+Copying blob sha256:609656ff5830582882d16050a7a37ffad65b4c54817be825a29da81592074800
+Copying blob sha256:d1d90b19f3020a7ad199467b4b773150fa330196475264f597140e6d7937c980
+Copying blob sha256:7b04b77f68922a6ddbf20c88cd8bae8422d873b879a80f97c7c89db853175732
+Copying blob sha256:4e5308d2b45f41b036623878979da8d2e7982bfd3e3ee44a9767fbd2844dc089
+Copying blob sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1
+Copying config sha256:66b3c40de9e6e6a1addbb2bca1756b4ae82f6c069c4d1b415908abcd82b0846e
+Writing manifest to image destination
+Storing signatures
+
 Release "cray-hms-test-development" does not exist. Installing it now.
 NAME: cray-hms-test-development
-LAST DEPLOYED: Mon Mar 28 20:21:15 2022
+LAST DEPLOYED: Thu Jul 28 02:20:58 2022
 NAMESPACE: services
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 NOTES:
-Installation info for chart cray-hms-test-development
+Installation info for chart cray-hms-test-development:
 ```
 
 ## How to tell that the environment is working:
@@ -103,7 +116,7 @@ cray-hms-test-development-6677f586dc-vp46b                        2/2     Runnin
 3. Pass in the overloaded URL with `-u`.
 
 ```
-ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b -c cray-hms-test-development sh
 /src/app $
 
 /src/app $ entrypoint.sh smoke -f /src/libs/example_smoke.json -u http://httpbin.org
@@ -137,7 +150,7 @@ Running smoke tests...
 1. Exec into the `cray-hms-test-development` pod (if you haven't already) and now you can use the tools.
 
 ```
-ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b sh
+ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-vp46b -c cray-hms-test-development sh
 /src/app $
 ```
 
@@ -216,7 +229,6 @@ collected 1 item
 test_service_status.tavern.yaml::Verify the service status resource PASSED                                                                                                                                            [100%]
 ```
 
-
 ## How to copy files into the pod's PVC
 
 ```
@@ -225,7 +237,7 @@ ncn-m001 # kubectl -n services cp {your file or directory} cray-hms-test-develop
 
 NOTE: `/src/data` is where the 1gb PVC is mounted.
 
-I recommend you do most development off cluster, then copy in files for rapid testing. However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
+It is recommended to do development off cluster, then copy in files for rapid testing. However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
 
 ## How to clean up and delete the PVC when you are COMPLETELY finished
 
