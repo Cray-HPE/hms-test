@@ -18,11 +18,11 @@ This will describe some development tools that have been created to aid in rapid
 #!/usr/bin/env bash
 
 # Download the chart from artifactory. The raw source is: https://github.com/Cray-HPE/hms-test-charts/tree/main/charts/v1.0/cray-hms-test-development
-wget https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.0.tgz
+wget https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.1.tgz
 
 # Upload the hms-test image to the system
-export REMOTE_IMAGE=artifactory.algol60.net/csm-docker/stable/hms-test:3.0.0
-export LOCAL_IMAGE=hms-test:3.0.0
+export REMOTE_IMAGE=artifactory.algol60.net/csm-docker/stable/hms-test:3.2.0
+export LOCAL_IMAGE=hms-test:3.2.0
 
 NEXUS_USERNAME="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.username}} | base64 -d)"
 NEXUS_PASSWORD="$(kubectl -n nexus get secret nexus-admin-credential --template {{.data.password}} | base64 -d)"
@@ -33,22 +33,22 @@ podman run --rm --network host quay.io/skopeo/stable \
     --dest-password "$NEXUS_PASSWORD"
 
 # Use helm to upgrade/install the chart
-helm upgrade --install -n services cray-hms-test-development ./cray-hms-test-development-1.0.0.tgz
+helm upgrade --install -n services cray-hms-test-development ./cray-hms-test-development-1.0.1.tgz
 ```
 
 Output should look something like:
 
 ```
---2022-03-28 20:21:11--  https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.0.tgz
+--2022-03-28 20:21:11--  https://artifactory.algol60.net/artifactory/csm-helm-charts/stable/cray-hms-test-development/cray-hms-test-development-1.0.1.tgz
 Resolving artifactory.algol60.net (artifactory.algol60.net)... 34.120.105.219
 Connecting to artifactory.algol60.net (artifactory.algol60.net)|34.120.105.219|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 17671 (17K) [application/x-gzip]
-Saving to: ‘cray-hms-test-development-1.0.0.tgz.1’
+Saving to: ‘cray-hms-test-development-1.0.1.tgz.1’
 
-cray-hms-test-development-1.0.0.tgz.1 100%[=========================================================================>]  17.26K  --.-KB/s    in 0.01s
+cray-hms-test-development-1.0.1.tgz.1 100%[=========================================================================>]  17.26K  --.-KB/s    in 0.01s
 
-2022-03-28 20:21:11 (1.33 MB/s) - ‘cray-hms-test-development-1.0.0.tgz.1’ saved [17671/17671]
+2022-03-28 20:21:11 (1.33 MB/s) - ‘cray-hms-test-development-1.0.1.tgz.1’ saved [17671/17671]
 
 Getting image source signatures
 Copying blob sha256:3aa4d0bbde192bfaba75f2d124d8cf2e6de452ae03e55d54105e46b06eb8127e
@@ -216,7 +216,6 @@ collected 1 item
 test_service_status.tavern.yaml::Verify the service status resource PASSED                                                                                                                                            [100%]
 ```
 
-
 ## How to copy files into the pod's PVC
 
 ```
@@ -225,7 +224,7 @@ ncn-m001 # kubectl -n services cp {your file or directory} cray-hms-test-develop
 
 NOTE: `/src/data` is where the 1gb PVC is mounted.
 
-I recommend you do most development off cluster, then copy in files for rapid testing. However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
+It is recommended to do development off cluster, then copy in files for rapid testing. However, the PVC is persistent, so if you put your data files in `/src/data` they should persist, assuming you don't delete the PVC.
 
 ## How to clean up and delete the PVC when you are COMPLETELY finished
 
