@@ -4,11 +4,11 @@ networks:
   hms-test:
 
 services:
-  functional_test:
+  tavern_test:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["functional","-c", "/src/libs/tavern_global_config_integration_test.yaml","-p","/src/libs"]
+    command: ["tavern","-c", "/src/libs/tavern_global_config_integration_test.yaml","-p","/src/libs"]
     depends_on:
       - httpbin
     networks:

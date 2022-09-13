@@ -28,10 +28,10 @@ if [[ "$1" == "smoke" ]]; then
     # pass along the smoke test arguments
     /src/app/smoke_test.py ${@:2}
     RET=$?
-elif [[ "$1" == "functional" ]]; then
-    echo "Running functional tests..."
+elif [[ "$1" == "tavern" ]]; then
+    echo "Running tavern tests..."
     # pass along the functional test arguments
-    /src/app/functional_test.py ${@:2}
+    /src/app/tavern_test.py ${@:2}
     RET=$?
 else
     echo "ERROR: Unsupported test type"
