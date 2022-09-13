@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [4.0.0] - 2022-09-13
+
+### added
+
+- converted notion of 'functional' tests to what they really are 'tavern' invocations.
+
 ## [3.2.0] - 2022-07-19
 
 ### Changed

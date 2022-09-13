@@ -50,7 +50,7 @@ RUN set -ex \
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
 COPY cmd/smoke_test.py /src/app/smoke_test.py
-COPY cmd/functional_test.py /src/app/functional_test.py
+COPY cmd/tavern_test.py /src/app/tavern_test.py
 COPY libs/ /src/libs
 COPY libs/pytest.ini /src/app/pytest.ini
 

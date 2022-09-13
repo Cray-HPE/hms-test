@@ -54,13 +54,13 @@ if [[ $test_result -ne 0 ]]; then
   cleanup 1
 fi
 
-docker-compose up --exit-code-from functional_test functional_test
+docker-compose up --exit-code-from tavern_test tavern_test
 test_result=$?
 
 # Clean up
 echo "Cleaning up containers..."
 if [[ $test_result -ne 0 ]]; then
-  echo "Integration functional tests FAILED!"
+  echo "Integration tavern tests FAILED!"
   cleanup 1
 fi
 

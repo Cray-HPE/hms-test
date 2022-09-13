@@ -2,7 +2,7 @@
 
 This is a MAJOR redesign (v3); see v1 code for how RPMs were previously packaged and deployed for testing in CSM-1.2 and earlier releases.
 This repository contains the docker image `hms-test` that is inherited by the `continuous test` images (eg: `cray-firmware-action-test` in `hms-firmware-action` repo).
-The image contains pytest, tavern, python, and execution scripts for smoke/functional tests. This image also includes the default configuration files (that can be overridden).
+The image contains pytest, tavern, python, and execution scripts for smoke/tavern tests. This image also includes the default configuration files (that can be overridden).
 This repository also contains a dockerfile for `hms-pytest` which is the legacy way of executing CT RPMs.
 
 
@@ -154,15 +154,15 @@ ncn-m001 # kubectl -n services exec -i -t cray-hms-test-development-6677f586dc-v
 /src/app $
 ```
 
-1. To run functional tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `functional` argument.
+1. To run tavern tests which will invoke tavern via pytest, trigger the `entrypoint` script with the `tavern` argument.
 2. Pass in the tavern config file location using `-c`.
 3. Point to the directory with the `test*.yaml` tavern tests with `-p`.
 
 ```
-/src/app $ cp /src/libs/test_example_functional.tavern.yaml /src/app/
+/src/app $ cp /src/libs/test_example_api_non-disruptive.tavern.yaml /src/app/
 
-/src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
-Running functional tests...
+/src/app $ entrypoint.sh tavern -c /src/libs/tavern_global_config_integration_test.yaml -p /src/app
+Running tavern tests...
 ================================================================= test session starts ==================================================================
 platform linux -- Python 3.9.7, pytest-6.1.2, py-1.11.0, pluggy-0.13.1 -- /usr/bin/python3
 cachedir: .pytest_cache
@@ -170,14 +170,14 @@ rootdir: /src/libs, configfile: pytest.ini
 plugins: tap-3.3, tavern-1.12.2
 collected 1 item
 
-../libs/test_example_functional.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
+../libs/test_example_api_non-disruptive.tavern.yaml::Verify the service status resource PASSED                                                           [100%]
 
-/src/app $ rm /src/app/test_example_functional.tavern.yaml
+/src/app $ rm /src/app/test_example_api_non-disruptive.tavern.yaml
 ```
 
-1. You should use the `/src/libs/tavern_global_config.yaml` file for functional tests that make calls to HMS services.
+1. You should use the `/src/libs/tavern_global_config.yaml` file for API tavern tests that make calls to HMS services.
 2. You will need to modify or add url paths in `/src/libs/tavern_global_config.yaml` to expose different APIs or include a separate file with updated paths.
-3. The following example shows a simple HMS functional test for FAS (Firmware Action Service).
+3. The following example shows a simple HMS API test for FAS (Firmware Action Service).
 
 ```
 /src/app $ cat /src/libs/tavern_global_config.yaml | grep fas_base_url
@@ -217,8 +217,8 @@ stages:
                 enum:
                   - "running"
 
-/src/app $ entrypoint.sh functional -c /src/libs/tavern_global_config.yaml -p /src/app
-Running functional tests...
+/src/app $ entrypoint.sh tavern -c /src/libs/tavern_global_config.yaml -p /src/app
+Running tavern tests...
 ==================================================================================================== test session starts ====================================================================================================
 platform linux -- Python 3.9.7, pytest-6.1.2, py-1.11.0, pluggy-0.13.1 -- /usr/bin/python3
 cachedir: .pytest_cache
