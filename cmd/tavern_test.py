@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -45,6 +45,8 @@ if __name__ == '__main__':
                         help='The path to the Tavern global config file')
     parser.add_argument('-p', '--path', action='store', required=True,
                         help='Directory with the tavern tests')
+    parser.add_argument('-a', '--allure-dir', action='store', required=False,
+                        help='Directory to store Allure')
 
     # # Parse the command line arguments
     arguments = parser.parse_args()
@@ -65,7 +67,10 @@ if __name__ == '__main__':
     ##  RUN TESTS
     #######################
     try:
-        pytest_run = subprocess.run(["pytest", "-vvvv", "--tavern-global-cfg=" + config_file, tavern_test_dir], check=True)
+        cmd = ["pytest", "-vvvv", "--tavern-global-cfg=" + config_file, tavern_test_dir]
+        if arguments.allure_dir is not None:
+            cmd += ["--alluredir="+arguments.allure_dir]
+        pytest_run = subprocess.run(cmd, check=True)
     except Exception as e:
 
         logging.error("FAIL")

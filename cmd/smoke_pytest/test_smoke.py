@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
-
+#! /usr/bin/env python3
+#
 # MIT License
 #
-# (C) Copyright [2021-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -22,52 +22,11 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-set -x
+import requests
 
-# Configure docker compose
-export COMPOSE_PROJECT_NAME=$RANDOM
-export COMPOSE_FILE=docker-compose.integration.yaml
+def test_smoke(smoke_test_data):
 
-echo "COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}"
-echo "COMPOSE_FILE: $COMPOSE_FILE"
+    req = requests.request(url=smoke_test_data["url"], method=str(smoke_test_data["method"]).upper(), data=smoke_test_data["body"],
+                                   headers=smoke_test_data["headers"])
 
-
-function cleanup() {
-  docker-compose down
-  if [[ $? -ne 0 ]]; then
-    echo "Failed to decompose environment!"
-    exit 1
-  fi
-  exit $1
-}
-
-
-echo "Starting containers..."
-docker-compose build
-if [[ $? -ne 0 ]]; then
-  echo "Failed to build images!"
-  cleanup 1
-fi
-
-docker-compose up --exit-code-from smoke_test smoke_test
-test_result=$?
-
-# Clean up
-echo "Cleaning up containers..."
-if [[ $test_result -ne 0 ]]; then
-  echo "Integration smoke tests FAILED!"
-  cleanup 1
-fi
-
-docker-compose up --exit-code-from tavern_test tavern_test
-test_result=$?
-
-# Clean up
-echo "Cleaning up containers..."
-if [[ $test_result -ne 0 ]]; then
-  echo "Integration tavern tests FAILED!"
-  cleanup 1
-fi
-
-echo "Integration tests PASSED!"
-cleanup 0
+    assert req.status_code == smoke_test_data["expected_status_code"], "unexpected status code."
