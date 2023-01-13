@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.0.0] - 2023-01-12
+
+### Changed
+- The smoke tests now run under pytest.
+- Added allure-pytest library to enable test report generation when running pytest.
+
 ## [4.0.0] - 2022-09-13
 
 ### added

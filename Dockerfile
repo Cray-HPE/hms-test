@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -41,6 +41,7 @@ RUN set -ex \
         pip \
         pytest==7.1.2 \
         tavern==1.23.1 \
+        allure-pytest==2.12.0 \
     && apk del \
         python3-dev \
         tar \
@@ -50,6 +51,7 @@ RUN set -ex \
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
 COPY cmd/smoke_test.py /src/app/smoke_test.py
+COPY cmd/smoke_pytest /src/app/smoke_pytest
 COPY cmd/tavern_test.py /src/app/tavern_test.py
 COPY libs/ /src/libs
 COPY libs/pytest.ini /src/app/pytest.ini
