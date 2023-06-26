@@ -14,3 +14,4 @@ variables:
   reds_base_url: http://cray-reds
   scsd_base_url: http://cray-scsd
   sls_base_url: http://cray-sls
+  spc_base_url: http://system-power-capping
