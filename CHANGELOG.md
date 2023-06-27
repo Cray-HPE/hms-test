@@ -24,15 +24,22 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.1.0] - 2023-06-26
+
+### Added
+
+- Added base URL for system-power-capping service.
+
 ## [5.0.0] - 2023-01-12
 
 ### Changed
+
 - The smoke tests now run under pytest.
 - Added allure-pytest library to enable test report generation when running pytest.
 
 ## [4.0.0] - 2022-09-13
 
-### added
+### Added
 
 - converted notion of 'functional' tests to what they really are 'tavern' invocations.
 
