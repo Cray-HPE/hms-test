@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.2.0] - 2023-09-22
+
+### Changed
+
+- Updated third party products in docker image
+
 ## [5.1.0] - 2023-06-26
 
 ### Added
