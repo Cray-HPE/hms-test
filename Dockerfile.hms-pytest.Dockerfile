@@ -31,13 +31,11 @@ RUN set -ex \
         python3 \
         py3-pip
 
-# Create a virtual environment
 RUN python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
     && pip install --upgrade pip \
     && pip install setuptools wheel cython
 
-# Install required packages, allowing tavern to select a compatible version of PyYAML
 RUN . /opt/venv/bin/activate \
     && pip install pytest==6.1.2 pytest-tap \
     && pip install tavern
