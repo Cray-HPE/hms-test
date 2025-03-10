@@ -29,31 +29,18 @@ RUN set -ex \
     && apk -U upgrade \
     && apk add --no-cache \
         python3 \
-        py3-pip \
-        python3-dev \
-        gcc \
-        musl-dev \
-        libffi-dev \
-        openssl-dev \
-        make \
-        cython
+        py3-pip
 
+# Create a virtual environment
 RUN python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
-    && pip3 install --upgrade \
-       pip \
-       pytest==6.1.2 \
-       tavern==1.12.2 \
-       pytest-tap \
-    && deactivate \
-    && apk del \
-	python3-dev \
-	gcc \
-	musl-dev \
-        libffi-dev \
-        openssl-dev \
-        make \
-	cython
+    && pip install --upgrade pip \
+    && pip install setuptools wheel cython
+
+# Install required packages, allowing tavern to select a compatible version of PyYAML
+RUN . /opt/venv/bin/activate \
+    && pip install pytest==6.1.2 pytest-tap \
+    && pip install tavern
 
 # Set the PATH to include the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
