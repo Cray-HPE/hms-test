@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.2.0] - 2025-03-12
+
+### Security
+
+- Updated image dependencies
+
 ## [5.1.0] - 2023-06-26
 
 ### Added
