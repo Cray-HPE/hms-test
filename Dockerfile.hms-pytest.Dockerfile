@@ -31,11 +31,14 @@ RUN set -ex \
         python3 \
         py3-pip
 
-RUN pip3 install --upgrade \
-    pip \
-    pytest==6.1.2 \
-    tavern==1.12.2 \
-    pytest-tap
+RUN python3 -m venv /opt/venv \
+    && . /opt/venv/bin/activate \
+    && pip3 install --upgrade \
+       pip \
+       pytest==6.1.2 \
+       tavern==1.12.2 \
+       pytest-tap \
+    && deactivate
 
 # nobody 65534:65534
 USER 65534:65534
