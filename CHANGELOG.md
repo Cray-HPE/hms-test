@@ -28,7 +28,11 @@ Security - in case of vulnerabilities
 
 ### Security
 
-- Updated image dependencies
+- Updated image dependencies for security updates
+- Updated Dockerfiles to install python packages via virtual environment due to image update
+- Fixed Makefile so pytest image can be built locally
+- Removed deprecated Version from docker compose file
+- Updated 'docker-compose' to 'docker compose' references in test script
 
 ## [5.1.0] - 2023-06-26
 
