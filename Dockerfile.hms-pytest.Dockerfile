@@ -44,5 +44,8 @@ RUN python3 -m venv /opt/venv \
     && deactivate \
     && apk del python3-dev gcc musl-dev
 
+# Set the PATH to include the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
+
 # nobody 65534:65534
 USER 65534:65534
