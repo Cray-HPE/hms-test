@@ -31,12 +31,11 @@ RUN set -ex \
         python3 \
         py3-pip
 
+# Create a virtual environment and install all required packages
 RUN python3 -m venv /opt/venv \
     && . /opt/venv/bin/activate \
     && pip install --upgrade pip \
-    && pip install setuptools wheel cython
-
-RUN . /opt/venv/bin/activate \
+    && pip install setuptools wheel cython \
     && pip install pytest==6.1.2 pytest-tap \
     && pip install tavern
 
