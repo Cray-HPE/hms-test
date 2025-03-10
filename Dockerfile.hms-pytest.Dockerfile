@@ -33,6 +33,9 @@ RUN set -ex \
         python3-dev \
         gcc \
         musl-dev \
+        libffi-dev \
+        openssl-dev \
+        make \
         cython
 
 RUN python3 -m venv /opt/venv \
@@ -43,7 +46,14 @@ RUN python3 -m venv /opt/venv \
        tavern==1.12.2 \
        pytest-tap \
     && deactivate \
-    && apk del python3-dev gcc musl-dev cython
+    && apk del \
+	python3-dev \
+	gcc \
+	musl-dev \
+        libffi-dev \
+        openssl-dev \
+        make \
+	cython
 
 # Set the PATH to include the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
