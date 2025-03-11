@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022,2025] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -33,4 +33,4 @@ integration:
 
 #this repo also builds the legacy pytest image, in case you need it!
 pytest:
-	docker build --pull ${DOCKER_ARGS} -f Dockerfile.hms-pytest --tag 'hms-pytest:${VERSION}' .
+	docker build --pull ${DOCKER_ARGS} -f Dockerfile.hms-pytest.Dockerfile --tag 'hms-pytest:${VERSION}' .

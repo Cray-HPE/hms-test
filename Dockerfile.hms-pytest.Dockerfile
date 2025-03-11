@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2022,2025] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,7 +20,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-FROM artifactory.algol60.net/docker.io/alpine:3.15
+FROM artifactory.algol60.net/docker.io/alpine:3.21
 LABEL maintainer="Hewlett Packard Enterprise"
 STOPSIGNAL SIGTERM
 
@@ -31,11 +31,16 @@ RUN set -ex \
         python3 \
         py3-pip
 
-RUN pip3 install --upgrade \
-    pip \
-    pytest==6.1.2 \
-    tavern==1.12.2 \
-    pytest-tap
+# Create a virtual environment and install all required packages
+RUN python3 -m venv /opt/venv \
+    && . /opt/venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install setuptools wheel cython \
+    && pip install pytest==6.1.2 pytest-tap \
+    && pip install tavern
+
+# Set the PATH to include the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
 
 # nobody 65534:65534
 USER 65534:65534

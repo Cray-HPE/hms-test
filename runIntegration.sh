@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# (C) Copyright [2021-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2021-2022,2025] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -33,7 +33,7 @@ echo "COMPOSE_FILE: $COMPOSE_FILE"
 
 
 function cleanup() {
-  docker-compose down
+  docker compose down
   if [[ $? -ne 0 ]]; then
     echo "Failed to decompose environment!"
     exit 1
@@ -43,13 +43,13 @@ function cleanup() {
 
 
 echo "Starting containers..."
-docker-compose build
+docker compose build
 if [[ $? -ne 0 ]]; then
   echo "Failed to build images!"
   cleanup 1
 fi
 
-docker-compose up --exit-code-from smoke_test smoke_test
+docker compose up --exit-code-from smoke_test smoke_test
 test_result=$?
 
 # Clean up
@@ -59,7 +59,7 @@ if [[ $test_result -ne 0 ]]; then
   cleanup 1
 fi
 
-docker-compose up --exit-code-from tavern_test tavern_test
+docker compose up --exit-code-from tavern_test tavern_test
 test_result=$?
 
 # Clean up

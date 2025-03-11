@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023,2025] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,7 +20,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-FROM artifactory.algol60.net/csm-docker/stable/docker.io/library/alpine:3.15
+FROM artifactory.algol60.net/csm-docker/stable/docker.io/library/alpine:3.21
 
 LABEL maintainer="Hewlett Packard Enterprise"
 STOPSIGNAL SIGTERM
@@ -37,16 +37,22 @@ RUN set -ex \
         tar \
         gcc \
         musl-dev \
+    && python3 -m venv /opt/venv \
+    && . /opt/venv/bin/activate \
     && pip3 install --upgrade \
         pip \
         pytest==7.1.2 \
         tavern==1.23.1 \
         allure-pytest==2.12.0 \
+    && deactivate \
     && apk del \
         python3-dev \
         tar \
         gcc \
         musl-dev
+
+# Set the PATH to include the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
