@@ -24,6 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.3.0] - 2025-03-13
+
+### Changed
+
+- tbd
+
 ## [5.2.0] - 2025-03-12
 
 ### Security
