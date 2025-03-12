@@ -38,13 +38,11 @@ RUN set -ex \
         gcc \
         musl-dev \
     && python3 -m venv /opt/venv \
-#    && . /opt/venv/bin/activate \
     && /opt/venv/bin/pip3 install --upgrade \
         pip \
         pytest==7.1.2 \
         tavern==1.23.1 \
         allure-pytest==2.12.0 \
-#    && deactivate \
     && apk del \
         python3-dev \
         tar \
@@ -52,7 +50,7 @@ RUN set -ex \
         musl-dev
 
 # Set the PATH to include the virtual environment
-#ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY cmd/hms-pytest /usr/bin/hms-pytest
 COPY cmd/entrypoint.sh /usr/bin/entrypoint.sh
