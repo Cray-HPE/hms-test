@@ -28,7 +28,8 @@ Security - in case of vulnerabilities
 
 ### Changed
 
-- tbd
+- Removed activate/deactivate from Dockerfile as not needed
+- Restored original contents of legacy pytest Dockerfile as pinned versions required
 
 ## [5.2.0] - 2025-03-12
 
