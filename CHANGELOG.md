@@ -24,12 +24,12 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
-## [5.3.0] - 2025-03-13
+## [5.3.1] - 2025-09-08
 
 ### Changed
 
-- Removed activate/deactivate from Dockerfile as not needed
-- Restored original contents of legacy pytest Dockerfile as pinned versions required
+- Explicitly install 'setuptools' so that 'distutils' is always present
+- Internal tracking ticket: CASMHMS-6596
 
 ## [5.2.0] - 2025-03-12
 

@@ -43,6 +43,7 @@ RUN set -ex \
         pytest==7.1.2 \
         tavern==1.23.1 \
         allure-pytest==2.12.0 \
+        setuptools==80.9.0 \
     && apk del \
         python3-dev \
         tar \
