@@ -24,6 +24,13 @@ Removed - for now removed features
 Security - in case of vulnerabilities
 -->
 
+## [5.4.0] - 2025-09-18
+
+### Security
+
+- Updated Alpine base image to pick up security fixes
+- Internal tracking ticket: CASMHMS-6551
+
 ## [5.3.1] - 2025-09-08
 
 ### Changed
